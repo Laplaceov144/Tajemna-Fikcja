@@ -1,0 +1,203 @@
+:root {
+    --clr-blue: rgba(87, 79, 36, 0.799);
+}
+body {
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(122,97,57,1) 35%, rgba(0,212,255,1) 100%);
+    overflow-x: hidden;
+}
+button:focus {
+    outline: none;
+}
+
+
+.fixed {
+    position: fixed;
+}
+nav {
+    margin-top: 2%;
+}
+.page-link {
+    color: black;
+}
+#link-input {
+    width: 20%;
+}
+.row {
+    display: flex;
+}
+
+.column {
+    flex: 50%;
+}
+    .column iframe, .column img {
+        /* width: calc(40vh); */
+        /* height: auto; */
+        transform: scale(1.2) translateX(2vh) translateY(6vh);
+    }
+    
+    iframe.YouTube {
+        margin-left: 10vh;
+    }
+
+    iframe.soundcloud, iframe.bandcamp {
+        width: 75%;
+        margin-top: -2.5vh;
+        margin-left: 12vh;
+    }
+    div#bandcamp {
+        overflow: hidden;
+        /* height: 40vh; */
+        height: 65vh;
+        margin-top: 2.5vh;
+    }
+    iframe.bandcamp {
+        /* margin-top: -30vh; */
+        margin-top: -65vh;
+        height: 130%;
+        border: 2px solid burlywood;
+    } 
+
+#track-nav {
+    position: fixed;
+    display: inline-flex;
+    flex-direction: row;
+    margin-top: -12.5vh;
+    margin-left: 2vw;
+
+}
+    #track-nav > * {
+        background-color: transparent;
+        border: none;
+        margin-top: 7.5vh;
+        transform: scale(5);
+        padding-right: 3vw;
+        padding-left: 3vw;
+        height: 0;
+        width: 0;
+    }
+    
+    #track-nav i, .pause-btn {
+        top: 10vh;
+        right: 10vw;
+    }
+    #track-nav i {
+        border: solid var(--clr-blue);
+        border-width: 0 3px 3px 0;
+    }
+        #track-nav .arrow:hover {
+            cursor: pointer;
+            border-color: burlywood;
+            transition: 50ms ease-in-out;
+        }
+        #track-nav .left {
+        }
+
+    .pause-btn {
+        font-weight: bold;
+        color: var(--clr-blue);
+    }
+    .bolded-item {
+        border: 3px solid burlywood;
+        background-color: white;
+        font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        font-weight: bold;
+    }
+
+
+.list-group {
+    width: 100%;
+    margin-top: 2%;
+    margin-right: 2.5%;
+    float: right;
+    height: calc(100vh - 125px);
+    overflow-y: scroll;
+}
+
+.list-group-item {
+    display: inline-flex;
+    align-items: flex-start;
+}
+/* .item-div {
+    display: inline-flex;
+} */
+    .arrow {
+        border: solid var(--clr-blue);
+        border-width: 0 3px 3px 0;
+        display: inline-block;
+        padding: 3px;
+    }
+    .left {
+        transform: rotate(135deg);
+    }
+    .right {
+        transform: rotate(-45deg); 
+    }
+    .list-group-item span {
+        position: relative;
+        width: 35vw;
+    }
+    .item-btn {
+        position: relative;
+        width: 5vw;
+        height: 5vh;
+        background-color: transparent;
+        border-radius: 200px;
+        border: 1px solid var(--clr-blue);
+    }
+    .play-btn {
+        margin-right: 10px;
+    }
+    .play-btn:hover {
+        cursor: pointer;
+    }
+    .delete-btn {
+        margin-left: 10px;
+        color: var(--clr-blue);
+        font-weight: bold;
+    }
+
+    .delete-btn:hover {
+        cursor: pointer;
+    }
+
+
+#special-buttons {
+    position: fixed;
+    margin-top: -95.5vh;
+    margin-left: 74vw;
+}
+        #special-buttons ul {
+            display: inline-flex;
+            list-style: none;
+        }
+        #special-buttons ul li {
+            opacity: 0.7;
+        }
+
+#alert {
+    position: fixed;
+    z-index: 2;
+    width: 33%;
+    text-align: center;
+    top: 15%;
+    left: 33%;
+    padding: 2.5%;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 1.5rem;
+    font-style: italic;
+    color: black;
+    background-color: burlywood;
+    border: 2px solid black;
+    border-radius: 10% 10% / 10% 10% ;
+}
+    #alert button {
+        padding: 0.5%;
+        border-radius: 25%;
+    }
+    .none {
+        display: none;
+    }
+    .block {
+        display: block;
+    }
