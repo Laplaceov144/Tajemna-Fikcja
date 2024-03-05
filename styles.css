@@ -23,6 +23,22 @@ nav {
 #link-input {
     width: 20%;
 }
+
+.link-input-hidden {
+    display: none;
+}
+
+#file-input {
+    /* margin-left: 25vw; */
+}
+
+.file-input {
+    display: none;
+}
+.file-input-visible {
+    display: block;
+}
+
 .row {
     display: flex;
 }
@@ -56,7 +72,11 @@ nav {
         margin-top: -65vh;
         height: 130%;
         border: 2px solid burlywood;
-    } 
+    }
+    
+    audio {
+        
+    }
 
 #track-nav {
     position: fixed;
@@ -85,12 +105,11 @@ nav {
         border: solid var(--clr-blue);
         border-width: 0 3px 3px 0;
     }
-        #track-nav .arrow:hover {
+        #track-nav .arrow:hover, .pause-btn:hover {
             cursor: pointer;
             border-color: burlywood;
+            color: burlywood;
             transition: 50ms ease-in-out;
-        }
-        #track-nav .left {
         }
 
     .pause-btn {
@@ -99,9 +118,13 @@ nav {
     }
     .bolded-item {
         border: 3px solid burlywood;
-        background-color: white;
-        font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        background-color: transparent;
+        color: rgb(144, 73, 73);
+        /* font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; */
+        /* font-weight: bold; */
         font-weight: bold;
+        font-style: italic;
+        letter-spacing: 0.1rem;
     }
 
 
@@ -201,3 +224,11 @@ nav {
     .block {
         display: block;
     }
+
+
+/* SPECIAL for YT player */
+iframe#player {
+    margin-left: 7.5vw;
+    width: 35vw;
+    height: 45vh;
+}

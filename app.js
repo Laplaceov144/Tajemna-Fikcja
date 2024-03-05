@@ -10,34 +10,27 @@ const SCAPI = window.SC.Widget;
 
 const autoplay = '?autoplay=1&loop=1&autopause=0';
 
+
 // YouTube
-const formattedYTsrc = (url) => {
-  const getID = (url) => {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-    const match = url.match(regExp);
+const getID = (url) => {
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+  const match = url.match(regExp);
 
-    return (match && match[2].length === 11)
-      ? match[2]
-      : null;
-  }
-  const result = '//www.youtube.com/embed/' + getID(url);
-  return result;
-  
+  return (match && match[2].length === 11)
+    ? match[2]
+    : null;
 }
+const formattedYTsrc = (url) => '//www.youtube.com/embed/' + getID(url) + '?&autoplay=1';
 
-// const videoId = getId('https://youtu.be/tX55HEX0hb0');
-// const iframeMarkup = '<iframe width="560" height="315" src="//www.youtube.com/embed/' 
-//   + videoId + '" frameborder="0" allowfullscreen></iframe>';
-//console.log('iframe html: ' +iframeMarkup);
+
+
+
 
 // soundcloud
-// const inputURL = 'https://soundcloud.com/whypeopledance/premiere-antoni-maoivvi-velvet-summer-italo-moderni';
 const formattedSCsrc = (inputURL) => 'https://w.soundcloud.com/player/?url=https%3A' + inputURL.slice(6) + '&auto_play=true';
-//const maiiovi = '<iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/whypeopledance/premiere-antoni-maoivvi-velvet-summer-italo-moderni"></iframe>';
 
-// bandcamp
-
-const availableMedia = ['YouTube', 'soundcloud', 'bandcamp', 'plik audio'];
+// Media select component
+const availableMedia = ['YouTube', 'soundcloud', 'plik audio'];
 const Nav = ({fName}) => {
   return(
     <nav>
@@ -50,21 +43,143 @@ const Nav = ({fName}) => {
   );
 }
 
-const TrackFrame = ({url, media}) => {
-  // <iframe className={media} frameborder="no" allow="autoplay" 
-  //     src={media == "soundcloud" ? formattedSCsrc(url) : 
-  //          media == 'YouTube' ? formattedYTsrc(url) : url} 
-  //     scrolling="no"
-  //     referrerpolicy="no-referrer-when-downgrade"
-  //    seamless>
 
-  //   </iframe>
-  // const widget1         = SC.Widget(document.querySelector('#player iframe'));
-  //   widget1.bind(SC.Widget.Events.FINISH, function() {
-  //     console.log("finiszzz");
+// YouTube API stuff
+var YTframe = document.createElement('div');
+YTframe.setAttribute('id', 'player');
+var tag = document.createElement('script');
+var player;
+tag.src = "./yt-api.js";
+var firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-  //   });
-  return(
+// Necessary global variables
+let playBtns, trackForm, navBtns, pauseBtn, playing;
+
+// Main player component
+const TrackFrame = ({url, media, fName}) => {
+  
+  switch(media) {
+    case 'YouTube':
+      document.body.append(YTframe); 
+
+      function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+          height: '300',
+          width: '500',
+          videoId: getID(url),
+          events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+          }
+        });
+      }
+
+      function onPlayerReady(event) {
+        event.target.playVideo();
+        playing = true;
+        document.querySelector('.pause-btn').style.color = 'rgba(87, 79, 36, 0.799)';
+      }
+
+      function onPlayerStateChange(event) {
+        if (event.data == 0) {
+          event.target.destroy();
+          fName();
+        }
+      }
+      
+      
+      onYouTubeIframeAPIReady();
+
+      // Make pause button interact with YouTube video
+      function bindVideoPausing() {
+        pauseBtn = document.querySelector('.pause-btn');
+        if(pauseBtn && pauseBtn != null) {
+          pauseBtn.addEventListener('click', function() {
+            if(player && playing) {
+              player.pauseVideo();
+              pauseBtn.style.color = 'burlywood';
+              playing = false;
+            } else if(player && !playing) {
+              player.playVideo();
+              pauseBtn.style.color = 'rgba(87, 79, 36, 0.799)';
+              playing = true;
+            }
+          });
+        }
+      }
+
+      // Necassary YT stuff
+      function bindDestroyersToBtns(btns) {
+        for(let i = 0; i < btns.length; i++) {
+          btns[i].addEventListener('click', function() {
+            if(player) {
+              player.destroy();
+              player = null;
+            }
+          });
+        }
+      }
+      function onLoadBindEventsThatDestroyYTPlayer() {
+        trackForm = document.querySelector('form');
+        playBtns = document.querySelectorAll('.play-btn');
+        navBtns = document.querySelectorAll('.nav-btn');
+        if(trackForm && trackForm != null) {
+          trackForm.addEventListener('submit', function() {
+            playBtns = document.querySelectorAll('.play-btn');
+            bindDestroyersToBtns(playBtns);
+          });
+        }
+
+        if(playBtns && playBtns != null) {
+          bindDestroyersToBtns(playBtns);
+        }
+
+        if(navBtns && navBtns != null) {
+          bindDestroyersToBtns(navBtns);
+        }
+
+      };
+
+
+      onLoadBindEventsThatDestroyYTPlayer();
+      bindVideoPausing();
+  
+    break; 
+
+
+    case 'soundcloud':
+
+      // Soundcloud widget API
+      setTimeout(function() {
+        const widget1 = SC.Widget(document.querySelector('#player iframe'));
+        widget1.bind(SC.Widget.Events.FINISH, function() {
+          fName();
+        });
+        playing = true;
+
+        // Make pause button interact with soundcloud player
+        function bindTrackPausing() {
+          pauseBtn = document.querySelector('.pause-btn');
+          if(pauseBtn && pauseBtn != null) {
+            pauseBtn.addEventListener('click', function() {
+              if(widget1 && playing) {
+                widget1.pause();
+                pauseBtn.style.color = 'burlywood';
+                playing = false;
+              } else if(widget1 && !playing) {
+                widget1.play();
+                pauseBtn.style.color = 'rgba(87, 79, 36, 0.799)';
+                playing = true;
+              }
+            });
+          }
+        }
+        bindTrackPausing();
+      }, 2000);
+    
+
+    return(
     <div id={media}>
       <iframe className={media} frameborder="no" allow="autoplay" 
       src={media == "soundcloud" ? formattedSCsrc(url) : 
@@ -75,8 +190,30 @@ const TrackFrame = ({url, media}) => {
 
     </iframe>
     </div>
-    
-  );
+    );
+
+    case 'plik audio':
+      console.log(url);
+      if(document.querySelector('audio')) {
+        document.querySelector('audio').remove();
+      }
+      setTimeout(function() {
+        const audioElement = document.getElementById('myAudio');
+        audioElement.play().catch(function(error) {
+          console.log("AUTOPLAY BLOCKED ! !!!  ! !  H IO I  HELLLOO");
+        });
+      }, 2000);
+      return(
+        <div id={media.slice(0,3)}>
+          <audio id="myAudio" controls autoplay>
+            <source src={url} type="audio/mpeg"/>
+          </audio>
+        </div>
+      );
+    default:
+      console.log("default media XFJWDIARFADHFIEQWJF!!!");
+  }
+
 }
 
 // Recover data from local storage
@@ -141,8 +278,10 @@ const Item = ({ index, item, playBtn, deleteBtn }) => (
         {...provided.dragHandleProps}
         ref = {provided.innerRef}
       >
-        <button onClick={() => playBtn(item)} class="item-btn play-btn"><i class="arrow right"></i></button>
-        <span class="item-text">{item.trackUrl}</span>
+        <button onClick={() => playBtn(item)} class="item-btn play-btn"><i class="arrow right"></i>
+        </button>
+        <span class="item-text" data-media={item.media}>{item.media == 'plik audio' 
+                                                          ? item.fileName : item.trackUrl}</span>
         <button onClick={() => deleteBtn(item)} class=" item-btn delete-btn">X</button>
       </li>
     )}
@@ -172,11 +311,11 @@ const TrackNav = (props) => {
   return(
     <section id="track-nav">
       <button 
-      class="previous-btn"><i class="arrow left"
+      class="nav-btn previous-btn"><i class="arrow left"
       onClick={props.prevBtn} ></i></button>
       <button class="pause-btn">||</button>
       <button 
-      class="next-btn"><i class="arrow right"
+      class="nav-btn next-btn"><i class="arrow right"
       onClick={props.nextBtn} ></i></button>
     </section>
   );
@@ -192,30 +331,43 @@ function App() {
         ? [list[0].media, list[0].trackUrl]
         : [null, null];
     };
+    const [selectedFile, setSelectedFile] = React.useState(null);
 
     const [state, setState] = React.useState({
       submitMedia: null,
       frameMedia: frameCheck(list)[0],
       submitUrl: null,
       frameUrl: frameCheck(list)[1],
-      currentTrackId: 0,
       popUpText: "",
       popUpDisplay: "none"
     }); 
-    
+    console.log(state.frameUrl);
+
     const selectMedia = (event) => {
       setState({
         ...state,
         submitMedia: event.target.textContent
       });
+      console.log(state.submitMedia);
     }
 
     const submitTrack = (event) => {
       event.preventDefault();
-      const submittedLink = event.target.querySelector('#link-input').value;
+      let submittedLink = event.target.querySelector('#link-input').value;
+      let fileName = null;
       const radioSelect = state.submitMedia;
+      // For local audio file
+      if(radioSelect == 'plik audio') {
+        submittedLink = URL.createObjectURL(event.target.querySelector('#file-input').files[0]);
+        fileName = event.target.querySelector("#file-input").value.split("fakepath").pop().slice(1);
+        setState({
+          ...state,
+          submitUrl: submittedLink
+        });
+      }
+
       // url validation
-      if(radioSelect != null) {
+      if(radioSelect != null && radioSelect != 'plik audio') {
         if(!submittedLink.includes(radioSelect.slice(0,5).toLowerCase())) {
           if(submittedLink && submittedLink != null) {
             setState({
@@ -226,7 +378,7 @@ function App() {
             return false;
           } else return false;
         }
-      } else {
+      } else if(radioSelect != 'plik audio') {
         setState({
           ...state,
           popUpText: "Wybierz którąś z platform!",
@@ -235,22 +387,26 @@ function App() {
         return false;
       }
       
-
-      setState({
+      if(submittedLink) {
+        setState({
           ...state,
           submitUrl: submittedLink
-      });
+        });
+      }
+      
       
       list.push({
         id: (list.length + 1).toString(),
         media: radioSelect,
-        trackUrl: submittedLink
+        trackUrl: submittedLink,
+        fileName: fileName
       });
       if(list.length == 1 && state.frameUrl == null) {
+        console.log(submittedLink);
         setState({
           ...state,
           frameMedia: radioSelect,
-          frameUrl: submittedLink
+          frameUrl: submittedLink,
         });
       }
       
@@ -265,6 +421,7 @@ function App() {
       }
 
       event.target.querySelector('#link-input').value = null;
+      event.target.querySelector('#file-input').value = null;
     }
 
     const handleDragEnd = ({ destination, source }) => {
@@ -276,11 +433,11 @@ function App() {
     // Play track from list
     const playFromList = (item) => {
       const itemIndex = list.indexOf(item);
+      console.log(item.trackUrl);
       setState({
         ...state,
         frameMedia: item.media,
         frameUrl: item.trackUrl,
-        currentTrackId: itemIndex
       });
 
       // Outline the style of a played item
@@ -331,7 +488,10 @@ function App() {
           <Nav fName={selectMedia} mediaList={availableMedia}/>
 
             <form class="pagination justify-content-center" onSubmit={submitTrack}>
-              <input id="link-input" type="text"   />
+              <input id="link-input" type="text"  
+              className={state.submitMedia == 'plik audio' ? 'link-input-hidden' : null} />
+              <input type="file" id="file-input" name="audio" accept=".mp3"
+              className={state.submitMedia == 'plik audio' ? 'file-input-visible' : 'file-input'}/>
               <button type="submit">dodaj</button>
             </form>
 
@@ -340,7 +500,8 @@ function App() {
             <div class="column ">
               <section id="player">
                 <TrackFrame media={state.frameMedia} 
-                            url={state.frameUrl}/>
+                            url={state.frameUrl}
+                            fName={nextTrack}/>
               </section>
             </div>
 
@@ -382,25 +543,18 @@ function App() {
 ReactDOM.render(<App />, document.querySelector('#app'));
 
 
-    const widget1         = SC.Widget(document.querySelector('#player iframe'));
-    widget1.bind(SC.Widget.Events.FINISH, function() {
-      console.log("finiszzz");
 
+// Additional pause button functionality
+window.onload = () => {
+  navBtns = document.querySelectorAll('.nav-btn');
+  pauseBtn = document.querySelector('.pause-btn');
+  navBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      pauseBtn.style.color = 'rgba(87, 79, 36, 0.799)'
+      playing = false;
     });
-  
-// document.querySelector('.right').addEventListener('click', function(event) {
-//     console.log("lewa szczałka !!!");
-// });
-
-
-// soundcloud API
-// const iframeElement   = document.querySelector('#player iframe');
-
-// //const iframeElementID = iframeElement.id;
-// const widget1         = SC.Widget(iframeElement);
-//const widget2         = SC.Widget(iframeElementID);
-
-// bandcamp API
+  });
+}
 
 
 
