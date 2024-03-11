@@ -10,27 +10,7 @@ const SCAPI = window.SC.Widget;
 
 const autoplay = '?autoplay=1&loop=1&autopause=0';
 
-
-// YouTube
-const getID = (url) => {
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-  const match = url.match(regExp);
-
-  return (match && match[2].length === 11)
-    ? match[2]
-    : null;
-}
-const formattedYTsrc = (url) => '//www.youtube.com/embed/' + getID(url) + '?&autoplay=1';
-
-
-
-
-
-// soundcloud
-const formattedSCsrc = (inputURL) => 'https://w.soundcloud.com/player/?url=https%3A' + inputURL.slice(6) + '&auto_play=true';
-
 // Media select component
-const availableMedia = ['YouTube', 'soundcloud', 'plik audio'];
 const Nav = ({fName}) => {
   return(
     <nav>
@@ -43,24 +23,15 @@ const Nav = ({fName}) => {
   );
 }
 
-
-// YouTube API stuff
-var YTframe = document.createElement('div');
-YTframe.setAttribute('id', 'player');
-var tag = document.createElement('script');
-var player;
-tag.src = "./yt-api.js";
-var firstScriptTag = document.getElementsByTagName('script')[0];
-firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-// Necessary global variables
-let playBtns, trackForm, navBtns, pauseBtn, playing;
-
 // Main player component
 const TrackFrame = ({url, media, fName}) => {
-  
   switch(media) {
+
+    // YouTube case
     case 'YouTube':
+      if(isBeingSwapped && document.querySelector('audio')) {
+        document.querySelector('audio').remove();
+      }
       document.body.append(YTframe); 
 
       function onYouTubeIframeAPIReady() {
@@ -87,7 +58,6 @@ const TrackFrame = ({url, media, fName}) => {
           fName();
         }
       }
-      
       
       onYouTubeIframeAPIReady();
 
@@ -144,12 +114,14 @@ const TrackFrame = ({url, media, fName}) => {
 
       onLoadBindEventsThatDestroyYTPlayer();
       bindVideoPausing();
-  
+      isBeingSwapped = false;
     break; 
 
-
+    // Soundcloud case  
     case 'soundcloud':
-
+      if(isBeingSwapped && document.querySelector('audio')) {
+        document.querySelector('audio').remove();
+      }
       // Soundcloud widget API
       setTimeout(function() {
         const widget1 = SC.Widget(document.querySelector('#player iframe'));
@@ -177,95 +149,78 @@ const TrackFrame = ({url, media, fName}) => {
         }
         bindTrackPausing();
       }, 2000);
+      isBeingSwapped = false;
     
-
+     
     return(
     <div id={media}>
       <iframe className={media} frameborder="no" allow="autoplay" 
-      src={media == "soundcloud" ? formattedSCsrc(url) : 
-           media == 'YouTube' ? formattedYTsrc(url) : url} 
-      scrolling="no"
-      referrerpolicy="no-referrer-when-downgrade"
-     seamless>
-
-    </iframe>
+        src={formattedSCsrc(url)} 
+        scrolling="no"
+        referrerpolicy="no-referrer-when-downgrade"
+        seamless>
+      </iframe>
     </div>
     );
 
+    // Local audio case
     case 'plik audio':
-      console.log(url);
-      if(document.querySelector('audio')) {
-        document.querySelector('audio').remove();
-      }
       setTimeout(function() {
-        const audioElement = document.getElementById('myAudio');
-        audioElement.play().catch(function(error) {
-          console.log("AUTOPLAY BLOCKED ! !!!  ! !  H IO I  HELLLOO");
-        });
-      }, 2000);
-      return(
+        if(document.querySelector('audio')) {
+          const audioPlayer = document.querySelector('audio');
+          audioPlayer.addEventListener('ended', (event) => fName());
+          document.querySelector('.pause-btn').addEventListener('click', () => {
+            if(!audioPlayer.paused) {
+              audioPlayer.pause();
+              pauseBtn.style.color = 'burlywood';
+              playing = false;
+            } else {
+              audioPlayer.play();
+              pauseBtn.style.color = 'rgba(87, 79, 36, 0.799)';
+              playing = true;
+            }
+          });
+          const promise = audioPlayer.play();
+          if (promise !== undefined) {
+            promise.then(_ => {
+              console.log("AUTOIPPALY POSZEDŁ");
+            }).catch(error => {
+              console.log("error atplay !$#$");
+              audioPlayer.muted = true;
+              audioPlayer.play();
+              playing = true;
+            });
+          }
+        }
+      }, 1000);
+
+      let audioFrame;
+      if(document.querySelector('audio') && isBeingSwapped) {
+        document.querySelector('audio').remove(); 
+        isVJSAudioRendered = false;
+        audioFrame = document.createElement('audio');
+        document.querySelector('section#player').appendChild(audioFrame);
+        audioFrame.setAttribute('src', url);
+        audioFrame.setAttribute('controls', true);
+        audioFrame.setAttribute('autoplay', true);
+        isVJSAudioRendered = true;
+        isBeingSwapped = false;
+        break;
+      } else if(!isVJSAudioRendered) {
+        isBeingSwapped = false;
+        return(
         <div id={media.slice(0,3)}>
           <audio id="myAudio" controls autoplay>
             <source src={url} type="audio/mpeg"/>
           </audio>
         </div>
-      );
+        );
+      } 
+      
     default:
-      console.log("default media XFJWDIARFADHFIEQWJF!!!");
+      console.log("default media case");
   }
-
 }
-
-// Recover data from local storage
-let INITIAL_LIST = [];
-if(localStorage.getItem('playlist')) {
-  const retrieved = JSON.parse(localStorage.getItem('playlist'));
-  INITIAL_LIST = retrieved != null ? retrieved : [];
-}
-
-
-// Reorder list items after mouse drop
-const reorder = (list, startIndex, endIndex) => {
-    const result = Array.from(list);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
-  
-    return result;
-  };
-
-// Pseudo-randomize list-item background color
-const randomColor = (id) => {
-  let clr = parseInt(id) % 8;
-  switch(clr) {
-    case 0:
-      clr = "info";
-      break;
-    case 1:
-      clr = "secondary";
-      break;
-    case 2:
-      clr = "success";
-      break;
-    case 3:
-      clr = "danger";
-      break;
-    case 4:
-      clr = "warning";
-      break;
-    case 5:
-      clr = "primary";
-      break;
-    case 6:
-      clr = "light";
-      break;
-    case 7:
-      clr = "dark";
-      break;
-    default:
-      clr = "primary";
-  }
-  return "list-group-item list-group-item-" + clr;
-};
 
 
 // List item component  
@@ -307,6 +262,8 @@ const List = ({ list, onDragEnd, playFunction, deleteFunction }) => (
   </DragDropContext>
 );
 
+
+// Transport buttons component
 const TrackNav = (props) => {
   return(
     <section id="track-nav">
@@ -331,40 +288,43 @@ function App() {
         ? [list[0].media, list[0].trackUrl]
         : [null, null];
     };
-    const [selectedFile, setSelectedFile] = React.useState(null);
-
     const [state, setState] = React.useState({
       submitMedia: null,
       frameMedia: frameCheck(list)[0],
       submitUrl: null,
       frameUrl: frameCheck(list)[1],
       popUpText: "",
-      popUpDisplay: "none"
+      popUpDisplay: "none",
+      shuffle: false
     }); 
-    console.log(state.frameUrl);
 
+    // Radio-select from available media
     const selectMedia = (event) => {
+      const radioSelect = event.target.textContent;
       setState({
         ...state,
-        submitMedia: event.target.textContent
+        submitMedia: radioSelect
       });
-      console.log(state.submitMedia);
+      if(document.querySelector('audio').paused) {
+        setTimeout(function() {
+          document.querySelector('audio').pause();
+        }, 1001);
+      }
     }
 
+    // What happens after track submission
     const submitTrack = (event) => {
       event.preventDefault();
       let submittedLink = event.target.querySelector('#link-input').value;
       let fileName = null;
       const radioSelect = state.submitMedia;
+
       // For local audio file
       if(radioSelect == 'plik audio') {
         submittedLink = URL.createObjectURL(event.target.querySelector('#file-input').files[0]);
-        fileName = event.target.querySelector("#file-input").value.split("fakepath").pop().slice(1);
-        setState({
-          ...state,
-          submitUrl: submittedLink
-        });
-      }
+        const file = event.target.querySelector('#file-input').files[0];
+        fileName = event.target.querySelector("#file-input").value.split("fakepath").pop().slice(1);   
+      }  
 
       // url validation
       if(radioSelect != null && radioSelect != 'plik audio') {
@@ -394,13 +354,13 @@ function App() {
         });
       }
       
-      
       list.push({
         id: (list.length + 1).toString(),
         media: radioSelect,
         trackUrl: submittedLink,
         fileName: fileName
       });
+      
       if(list.length == 1 && state.frameUrl == null) {
         console.log(submittedLink);
         setState({
@@ -424,16 +384,19 @@ function App() {
       event.target.querySelector('#file-input').value = null;
     }
 
+
+    // DnD stuff
     const handleDragEnd = ({ destination, source }) => {
         if (!destination) return;
     
         setList(reorder(list, source.index, destination.index));
     }
 
+
     // Play track from list
     const playFromList = (item) => {
+      isBeingSwapped = true;
       const itemIndex = list.indexOf(item);
-      console.log(item.trackUrl);
       setState({
         ...state,
         frameMedia: item.media,
@@ -442,15 +405,25 @@ function App() {
 
       // Outline the style of a played item
       const items = document.querySelectorAll('.list-group-item');
+      let currentItem;
       let i = 0;
       for(item of items) {
         if(i == itemIndex) {
           item.classList.add('bolded-item');
+          currentItem = item;
         } else {
           item.classList.remove('bolded-item');
         }
         i++;
       }
+
+      // Emergency measures
+      setTimeout(function() {
+        if(!document.querySelector('.column #player') && !document.querySelector('section#player iframe')
+        && !document.querySelector('audio')) {
+          mayday(currentItem);
+        }
+      }, 1000);
     }
 
     // Delete item on button click
@@ -468,16 +441,69 @@ function App() {
       });
     }
 
+    // Play previous track
     const prevTrack = () => {
       const prevItem = list[list.indexOf(list.find(item => state.frameUrl.includes(item.trackUrl))) - 1];
       playFromList(prevItem);
     }
 
+    // Play next track
     const nextTrack = () => { 
-      const nextItem = list[list.indexOf(list.find(item => state.frameUrl.includes(item.trackUrl))) + 1];
+      let nextItem = list[list.indexOf(list.find(item => state.frameUrl.includes(item.trackUrl))) + 1];
+      if(state.shuffle) {
+        const filteredList = list.filter(item => !state.frameUrl.includes(item.trackUrl));
+        nextItem = filteredList[parseInt(Math.random() * (filteredList.length - 1))];
+      }
       playFromList(nextItem);
     }
 
+    // Clear playlist
+    const clearList = () => {
+      setList(list => []);
+      localStorage.setItem('playlist', null);
+    }
+
+    // Save playlist info
+    const tbaAlert = () => {
+      setState({
+        ...state,
+        popUpText: "Obecnie Twoja aktualna playlista zapisuje się za każdym razem w pamięci lokalnej Twojej przeglądarki (lecz bez lokalnych plików audio). W niedługim czasie planujemy uruchomić możliwość rejestracji i zapisywania większej ilości playlist. Stay tuned...",
+        popUpDisplay: "block"
+      });
+    }
+
+    // Shuffle button
+    const shuffle = (event) => {
+      const shuffleBtn = event.target;
+      if(state.shuffle) {
+        setState({
+          ...state,
+          shuffle: false
+        });
+        shuffleBtn.textContent = 'shuffle';
+        shuffleBtn.style.color = 'black';
+      } else {
+        setState({
+          ...state,
+          shuffle: true
+        });
+        shuffleBtn.textContent = 'shuffle on';
+        shuffleBtn.style.color = 'burlywood';
+      }
+    }
+
+    // Prevent YouTube API from embedding 2 players
+    window.onload = () => {
+      if(state.frameMedia == 'YouTube') {
+        const foundItem = list.find(item => item.trackUrl == state.frameUrl);
+        playFromList(foundItem);
+        setTimeout(function() {
+          if(document.querySelector('#app ~ #player')) {
+            document.querySelector('#app ~ #player').remove();
+          }
+        }, 200);
+      }
+    }
     
 
     return(
@@ -485,10 +511,11 @@ function App() {
            <TrackNav 
             prevBtn={prevTrack} nextBtn={nextTrack}
            />
+           <button class="shuffle-btn" onClick={shuffle}>shuffle</button>
           <Nav fName={selectMedia} mediaList={availableMedia}/>
 
             <form class="pagination justify-content-center" onSubmit={submitTrack}>
-              <input id="link-input" type="text"  
+              <input id="link-input" type="text" placeholder="wybierz medium i wklej tutaj link..." 
               className={state.submitMedia == 'plik audio' ? 'link-input-hidden' : null} />
               <input type="file" id="file-input" name="audio" accept=".mp3"
               className={state.submitMedia == 'plik audio' ? 'file-input-visible' : 'file-input'}/>
@@ -517,44 +544,31 @@ function App() {
 
           <section id="special-buttons">
             <ul>
-              <li class="page-item">
-                <a class="page-link">zapisz playlistę</a>
+            <li class="page-item">
+              <button class="page-link" onClick={tbaAlert}>zapisz playlistę</button>
+            </li>
+            <li class="page-item">
+                <button class="page-link clear-btn" onClick={clearList}>wyczyść playlistę
+                </button>
               </li>
-              <li class="page-item"><a class="page-link">importuj playlistę</a></li>
-          
             </ul>
           </section>
 
 
           <div id="alert" className={state.popUpDisplay}>{state.popUpText} <br></br>
-            <button onClick={hideAlert}>OK</button></div>
+            <button onClick={hideAlert}>OK</button>
+          </div>
        
-      
-      
-      
       </div>
 
     );
 }
 
-
-
-
 ReactDOM.render(<App />, document.querySelector('#app'));
 
 
 
-// Additional pause button functionality
-window.onload = () => {
-  navBtns = document.querySelectorAll('.nav-btn');
-  pauseBtn = document.querySelector('.pause-btn');
-  navBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      pauseBtn.style.color = 'rgba(87, 79, 36, 0.799)'
-      playing = false;
-    });
-  });
-}
+
 
 
 
