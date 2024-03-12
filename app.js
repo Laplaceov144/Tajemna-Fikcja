@@ -79,7 +79,7 @@ const TrackFrame = ({url, media, fName}) => {
         }
       }
 
-      // Necessary YT stuff
+      // Necassary YT stuff
       function bindDestroyersToBtns(btns) {
         for(let i = 0; i < btns.length; i++) {
           btns[i].addEventListener('click', function() {
@@ -492,19 +492,20 @@ function App() {
       }
     }
 
-    // Prevent YouTube API from embedding 2 players
-    window.onload = () => {
-      if(state.frameMedia == 'YouTube') {
-        const foundItem = list.find(item => item.trackUrl == state.frameUrl);
-        playFromList(foundItem);
-        setTimeout(function() {
-          if(document.querySelector('#app ~ #player')) {
-            document.querySelector('#app ~ #player').remove();
-          }
-        }, 200);
+    // Prevent YouTube API from embedding 2 players at the same time
+    setInterval(function() {
+      if(document.querySelector('#app ~ #player')) {
+        const playerSrc = document.querySelector('#app ~ iframe#player').getAttribute('src');
+        const extractedID = playerSrc.split('embed/')[1].slice(0,9);
+        const foundItem = list.find(item => item.trackUrl.includes(extractedID));
+        document.querySelector('#app ~ #player').remove();
+        setState({
+          ...state,
+          frameUrl: foundItem.trackUrl,
+          frameMedia: 'YouTube'
+        });
       }
-    }
-    
+    }, 800);
 
     return(
       <div>
