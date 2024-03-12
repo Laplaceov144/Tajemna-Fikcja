@@ -238,6 +238,7 @@ nav {
 
 /* SPECIAL for YT player */
 iframe#player {
+    margin-top: -0.7vh;
     margin-left: 7.5vw;
     width: 35vw;
     height: 45vh;
