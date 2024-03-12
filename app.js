@@ -79,7 +79,7 @@ const TrackFrame = ({url, media, fName}) => {
         }
       }
 
-      // Necassary YT stuff
+      // Necessary YT stuff
       function bindDestroyersToBtns(btns) {
         for(let i = 0; i < btns.length; i++) {
           btns[i].addEventListener('click', function() {
