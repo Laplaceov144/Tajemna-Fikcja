@@ -362,7 +362,6 @@ function App() {
       });
       
       if(list.length == 1 && state.frameUrl == null) {
-        console.log(submittedLink);
         setState({
           ...state,
           frameMedia: radioSelect,
@@ -403,21 +402,12 @@ function App() {
         frameUrl: item.trackUrl,
       });
 
-      // Outline the style of a played item
-      const items = document.querySelectorAll('.list-group-item');
-      let currentItem;
-      let i = 0;
-      for(item of items) {
-        if(i == itemIndex) {
-          item.classList.add('bolded-item');
-          currentItem = item;
-        } else {
-          item.classList.remove('bolded-item');
-        }
-        i++;
-      }
+      // Outline the style of the played item
+      outlineItem(itemIndex);
+      const currentItem = outlineItem(itemIndex);
 
-      // Emergency measures
+      // Make page reload in case iframe/player is not rendered after 1s
+      // (which presumably points to some error)
       setTimeout(function() {
         if(!document.querySelector('.column #player') && !document.querySelector('section#player iframe')
         && !document.querySelector('audio')) {
@@ -525,7 +515,7 @@ function App() {
 
           <div class="row">
 
-            <div class="column ">
+            <div class="column">
               <section id="player">
                 <TrackFrame media={state.frameMedia} 
                             url={state.frameUrl}

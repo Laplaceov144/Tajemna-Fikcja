@@ -71,6 +71,24 @@ const randomColor = (id) => {
     return "list-group-item list-group-item-" + clr;
 };
 
+// Outline the style of a played item and return it as an HTML element
+const outlineItem = (itemIndex) => {
+  const items = document.querySelectorAll('.list-group-item');
+  let currentItem;
+  let i = 0;
+  for(item of items) {
+    if(i == itemIndex) {
+      item.classList.add('bolded-item');
+      currentItem = item;
+    } else {
+      item.classList.remove('bolded-item');
+    }
+    i++;
+  }
+  return currentItem;
+}
+
+
 // Reload page when logic breaks down
 const mayday = (curr) => {
     const retrieved = JSON.parse(localStorage.getItem('playlist'));
@@ -123,3 +141,8 @@ window.onload = () => {
       });
     }
   }
+
+// Outline first item from list when page (re)loads
+window.onload = () => {
+  setTimeout(outlineItem(0), 200);
+}
