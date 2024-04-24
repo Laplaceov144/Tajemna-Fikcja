@@ -5,20 +5,6 @@
     --clr-window-border: rgba(222, 184, 135, 0.626);
     --clr-bg-image: white;
     --clr-btns: black;
-    /* --clr-bg-image: linear-gradient(
-                                    45deg,
-                                    hsl(240deg 100% 20%) 0%,
-                                    hsl(229deg 100% 20%) 11%,
-                                    hsl(223deg 100% 19%) 22%,
-                                    hsl(219deg 100% 17%) 33%,
-                                    hsl(215deg 100% 15%) 44%,
-                                    hsl(210deg 100% 13%) 56%,
-                                    hsl(203deg 100% 10%) 67%,
-                                    hsl(194deg 100% 8%) 78%,
-                                    hsl(187deg 70% 7%) 89%,
-                                    hsl(180deg 8% 10%) 100%
-                                    ); */
-    /* --clr-btns: rgba(240, 248, 255, 0.781); */
 }
 body {
     background: rgb(2,0,36);
@@ -63,8 +49,6 @@ nav {
     flex: 50%;
 }
     .column iframe, .column img {
-        /* width: calc(40vh); */
-        /* height: auto; */
         transform: scale(1.2) translateX(2vh) translateY(6vh);
     }
     
@@ -79,12 +63,10 @@ nav {
     }
     div#bandcamp {
         overflow: hidden;
-        /* height: 40vh; */
         height: 65vh;
         margin-top: 2.5vh;
     }
     iframe.bandcamp {
-        /* margin-top: -30vh; */
         margin-top: -65vh;
         height: 130%;
         border: 2px solid burlywood;
@@ -238,7 +220,6 @@ nav {
     padding: 2.5%;
     font-family: Helvetica, sans-serif;
     line-height: 1.75rem;
-    /* font-style: italic; */
     color: var(--clr-window-border);
     background: var(--clr-window-bg);
     background: var(--clr-window-gradient);
@@ -350,7 +331,6 @@ iframe#player {
     #load-form form {
         margin-top: 10px;
         width: 85%;
-        /* border: 1px solid black; */
     }
     #load-heading {
         margin-top: 0.5vh;
@@ -359,14 +339,12 @@ iframe#player {
     .stored-lists {
         list-style: none;
         width: 25px;
-        /* border: 1px solid black; */
         float: right;
         margin-right: 10vw;
     }
     .stored-item {
         display: inline-flex;
         align-items: flex-start;
-        /* border: 1px solid red; */
         width: 15vw;
         vertical-align: top;
     }
@@ -384,11 +362,9 @@ iframe#player {
     .stored-item label {
         padding-left: 5px;
         width: 9vw;
-        /* font-style: italic; */
         font-size: 1.1rem;
         font-weight: bold;
         text-align: center;
-        /* text-transform: uppercase; */
         color: var(--clr-window-border);
         margin-top: 2px;
     }
@@ -400,7 +376,6 @@ iframe#player {
     }
     .load-btn {
         position: relative;
-        /* margin-top: 17.5vh; */
         margin-left: 12.5vw;
         width: 20%;
     }
@@ -494,7 +469,6 @@ iframe#player {
     }
     .load-btn {
         width: 35%;
-        /* margin-top: 13.5vh; */
         margin-left: 13.5vw;
     }
 

@@ -147,7 +147,6 @@ function App() {
     const playFromList = (item) => {
       isBeingSwapped = true;
       const itemIndex = list.indexOf(item);
-      console.log(item);
       setState({
         ...state,
         frameMedia: item.media,
@@ -220,7 +219,6 @@ function App() {
       } else {
         nextItem = list[list.indexOf(list.find(item => state.frameUrl.includes(item.trackUrl))) + 1];
       }
-      console.log(nextItem);
       playFromList(nextItem);
     }
 
