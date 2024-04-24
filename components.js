@@ -88,11 +88,14 @@ const SaveForm = ({display, saveFunc, xFunc}) => {
 // Load playlist window
 const LoadForm = (props) => {
   const playlistTitles = props.titles;
+  const caption = playlistTitles.length 
+        ? "Twoje zapisane plejlisty"
+        : "Nie masz żadnych zapisanych plejlist.";
   return(
     <div id="load-form" className={props.display}>
       <button class="close-window" onClick={props.xFunc}>X</button>
       <div id="load-heading">
-        <h3 class="window-caption">Twoje zapisane playlisty</h3>
+        <h3 class="window-caption">{caption}</h3>
       </div>
       <form onSubmit={props.loadFunc}>
         <ul class="stored-lists">

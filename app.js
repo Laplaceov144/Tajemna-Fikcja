@@ -69,6 +69,8 @@ function App() {
           }
         } else if(submittedLink.includes('on.s')) {
           popUpText = "Link skrócony z Soundclouda nie zadziała. Wklej go tutaj w standardowej postaci.";
+        } else if(submittedLink.includes('spotify') && submittedLink.includes('album')) {
+          popUpText = "Link do albumu ze Spotify nie zadziała. Wklej link do pojedynczego tracka.";
         } else isValid = true;
 
       } else if(radioSelect != 'plik audio') {
