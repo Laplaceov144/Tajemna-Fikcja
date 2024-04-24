@@ -1,8 +1,23 @@
-// Format soundcloud url
-const formattedSCsrc = (inputURL) => 'https://w.soundcloud.com/player/?url=https%3A' + inputURL.slice(6) + '&auto_play=true';
-
 // Available media
-const availableMedia = ['YouTube', 'soundcloud', 'plik audio'];
+const availableMedia = ['YouTube', 'soundcloud', 'spotify', 'plik audio'];
+
+// Info text
+const infoText = ["Tajemna Fikcja to nowej jakości odtwarzacz muzyczny pozwalający na odtwarzanie muzyki (lub filmów) z różnych mediów oraz tworzenie z nich funkcjonalnych, zintegrowanych plejlist.", 
+                  "Aby dodać utwór do plejlisty wystarczy przekopiować jego URL (najlepiej prosto z paska przeglądarki), zaznaczyć, z której platformy pochodzi (YouTube, Soundcloud lub Spotify), następnie wkleić do opisanego okienka i kliknąć “dodaj”. Może to być również i plik mp3, którzy masz na dysku: tutaj użyjesz opcji “plik audio”. Każdy utwór odtwarza się automatycznie jeśli jest wczytany, a gdy się skończy to również i automatycznie odpali się następny na liście.",
+                  "Przycisk “<“ odpala poprzedni utwór, przycisk “II” pauzuje lub startuje, przycisk “>” odpala kolejny utwór, a przycisk “shuffle” włącza/wyłącza odtwarzanie w kolejności losowej. Utwory na plejliście można ustawiać w kolejności przeciągając je myszką. Przy każdym z nich widzimy też dodatkowy przycisk “>”, który po kliknięciu załaduje nam utwór prosto do odtwarzacza oraz przycisk “X”, który po kliknięciu usuwa utwór z listy.",
+                  "Możesz zapisać do dziesięciu plejlist w pamięci lokalnej swojej przeglądarki (nie wymaga to rejestracji, lecz siłą rzeczy - zapisane w ten sposób plejlisty nie będą dostępne na innych urządzeniach) i wczytywać je kiedy zechcesz."];
+
+// Format Soundcloud url
+const formattedSCsrc = (inputURL) => 'https://w.soundcloud.com/player/?url=https%3A//' + inputURL.slice(8) + '&auto_play=true';
+
+// Format spotify url
+const formattedSpotifySrc = (inputURL) => {
+  let trackID = inputURL.split('/').pop();
+  if(trackID.includes('?')) {
+    trackID = trackID.split('?')[0];
+  }
+  return trackID;
+}
 
 // YouTube API stuff
 var YTframe = document.createElement('div');
@@ -14,26 +29,29 @@ var firstScriptTag = document.getElementsByTagName('script')[0];
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
 
-// Necessary global variables
-let playBtns, trackForm, navBtns, pauseBtn, playing, isBeingSwapped, isVJSAudioRendered;
+// Spotify API stuff
+let spotifyPlayer = document.createElement('div');
+spotifyPlayer.setAttribute('id', 'embed-iframe');
 
-// Recover data from local storage (excluding local audio files)
-let INITIAL_LIST = [];
-if(localStorage.getItem('playlist')) {
-  const retrieved = JSON.parse(localStorage.getItem('playlist'));
-  const filtered = retrieved != null ? retrieved.filter(item => {
-    return item.media != 'plik audio';
-  }) : [];
-  INITIAL_LIST = filtered;
-}
+// Necessary global variables
+let playBtns, trackForm, navBtns, pauseBtn, playing, isBeingSwapped, isVJSAudioRendered, autoplayFalseFlag, spotifyController;
+const autoplay = '?autoplay=1&loop=1&autopause=0';
 
 // Reorder list items after mouse drop
 const reorder = (list, startIndex, endIndex) => {
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
     result.splice(endIndex, 0, removed);
-    localStorage.setItem('playlist', JSON.stringify(list));
-    
+    setTimeout(async function() {
+      try {
+        const db = await openIndexedDB(ourDBName);
+        console.log(await saveListToIndexedDB(db, storeID, list, 'playlist00'));
+      } catch (error) {
+        console.error(error);
+      }
+    }, 50);
+
+
     return result;
 };
 
@@ -71,7 +89,7 @@ const randomColor = (id) => {
     return "list-group-item list-group-item-" + clr;
 };
 
-// Outline the style of a played item and return it as an HTML element
+// Outline currently played item's style and return it as an HTML element
 const outlineItem = (itemIndex) => {
   const items = document.querySelectorAll('.list-group-item');
   let currentItem;
@@ -89,32 +107,31 @@ const outlineItem = (itemIndex) => {
 }
 
 
-// Reload page when logic breaks down
-const mayday = (curr) => {
-    const retrieved = JSON.parse(localStorage.getItem('playlist'));
-    const currentTrack = curr.querySelector('span');
-    if(currentTrack.dataset.media == 'plik audio') {
-        location.reload();
-    }
-    let currentTrackToList = {
-        id: '1',
-        media: currentTrack.dataset.media,
-        trackUrl: currentTrack.dataset.trackUrl,
-        fileName: null
-    }
-    let newList = retrieved.filter((item) => item.trackUrl != currentTrack.dataset.trackUrl);
-    newList.unshift(currentTrackToList);
-    newList = newList.map((item,index) => {
-        return {
-            id: (index + 1).toString(),
-            media: item.media,
-            trackUrl: item.trackUrl,
-            fileName: null
-        }
+// Reload page when logic breaks down with the fatal track moved to top of the playlist
+const mayday = (curr, list) => {
+    const currItem = curr.querySelector('span');
+    const currTrackToTop = list.find((item) => {
+      return currItem.dataset.media == 'plik audio'
+        ? item.fileName == currItem.innerText
+        : item.trackUrl == currItem.dataset.trackUrl;
     });
-    localStorage.setItem('playlist', JSON.stringify(newList));
-    location.reload();        
+    const reorderedList = [currTrackToTop, ...list.filter(item => item !== currTrackToTop)];
+
+    (async () => {
+      try {
+        const db = await openIndexedDB(ourDBName);
+        const saveListPromise = new Promise((resolve, reject) => {
+          resolve(saveListToIndexedDB(db, storeID, reorderedList, 'playlist00'));
+        });
+        saveListPromise.then(_ => {
+          location.reload();
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    })();
 }
+
 
 // Additional pause button functionality
 window.onload = () => {
@@ -142,7 +159,29 @@ window.onload = () => {
     }
   }
 
+
 // Outline first item from list when page (re)loads
 window.onload = () => {
-  setTimeout(outlineItem(0), 200);
+  setTimeout(outlineItem(0), 2500);
 }
+
+// Prevent unwanted autoplay on audio element
+const preventAudioPlay = () => {
+  if(document.querySelector('audio') && document.querySelector('audio').paused) {
+    autoplayFalseFlag = true;
+  } else autoplayFalseFlag = false;
+}
+
+// Format retrieved playlist
+const formatList = (list) => {
+  if(list) {
+    return list.filter(item => item).map((item,index) => {
+      return {
+        ...item,
+        id: (index + 1).toString()
+      }
+    });
+  } else return [];
+}
+
+

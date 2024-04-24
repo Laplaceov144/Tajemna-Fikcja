@@ -1,289 +1,11 @@
-// import React from './react';
-// import ReactDOM from './react.dom';
-// import { DragDropContext, Draggable, Droppable } from './react-dnd';
-// import SC from './sc-api';
-const React = window.React;
-const ReactDOM = window.ReactDOM;
-const { DragDropContext, Draggable, Droppable } = window.ReactBeautifulDnd;
-// import { DragDropContext, Draggable, Droppable } from "./react-dnd.js";
-const SCAPI = window.SC.Widget;
-
-const autoplay = '?autoplay=1&loop=1&autopause=0';
-
-// Media select component
-const Nav = ({fName}) => {
-  return(
-    <nav>
-        <ul class="pagination justify-content-center">
-          {availableMedia.map((item) => (
-            <li class="page-item"><button class="page-link" onClick={fName}>{item}</button></li>
-          ))}
-        </ul>
-    </nav>
-  );
-}
-
-// Main player component
-const TrackFrame = ({url, media, fName}) => {
-  switch(media) {
-
-    // YouTube case
-    case 'YouTube':
-      if(isBeingSwapped && document.querySelector('audio')) {
-        document.querySelector('audio').remove();
-      }
-      document.body.append(YTframe); 
-
-      function onYouTubeIframeAPIReady() {
-        player = new YT.Player('player', {
-          height: '300',
-          width: '500',
-          videoId: getID(url),
-          events: {
-            'onReady': onPlayerReady,
-            'onStateChange': onPlayerStateChange
-          }
-        });
-      }
-
-      function onPlayerReady(event) {
-        event.target.playVideo();
-        playing = true;
-        document.querySelector('.pause-btn').style.color = 'rgba(87, 79, 36, 0.799)';
-      }
-
-      function onPlayerStateChange(event) {
-        if (event.data == 0) {
-          event.target.destroy();
-          fName();
-        }
-      }
-      
-      onYouTubeIframeAPIReady();
-
-      // Make pause button interact with YouTube video
-      function bindVideoPausing() {
-        pauseBtn = document.querySelector('.pause-btn');
-        if(pauseBtn && pauseBtn != null) {
-          pauseBtn.addEventListener('click', function() {
-            if(player && playing) {
-              player.pauseVideo();
-              pauseBtn.style.color = 'burlywood';
-              playing = false;
-            } else if(player && !playing) {
-              player.playVideo();
-              pauseBtn.style.color = 'rgba(87, 79, 36, 0.799)';
-              playing = true;
-            }
-          });
-        }
-      }
-
-      // Necassary YT stuff
-      function bindDestroyersToBtns(btns) {
-        for(let i = 0; i < btns.length; i++) {
-          btns[i].addEventListener('click', function() {
-            if(player) {
-              player.destroy();
-              player = null;
-            }
-          });
-        }
-      }
-      function onLoadBindEventsThatDestroyYTPlayer() {
-        trackForm = document.querySelector('form');
-        playBtns = document.querySelectorAll('.play-btn');
-        navBtns = document.querySelectorAll('.nav-btn');
-        if(trackForm && trackForm != null) {
-          trackForm.addEventListener('submit', function() {
-            playBtns = document.querySelectorAll('.play-btn');
-            bindDestroyersToBtns(playBtns);
-          });
-        }
-
-        if(playBtns && playBtns != null) {
-          bindDestroyersToBtns(playBtns);
-        }
-
-        if(navBtns && navBtns != null) {
-          bindDestroyersToBtns(navBtns);
-        }
-
-      };
-
-
-      onLoadBindEventsThatDestroyYTPlayer();
-      bindVideoPausing();
-      isBeingSwapped = false;
-    break; 
-
-    // Soundcloud case  
-    case 'soundcloud':
-      if(isBeingSwapped && document.querySelector('audio')) {
-        document.querySelector('audio').remove();
-      }
-      // Soundcloud widget API
-      setTimeout(function() {
-        const widget1 = SC.Widget(document.querySelector('#player iframe'));
-        widget1.bind(SC.Widget.Events.FINISH, function() {
-          fName();
-        });
-        playing = true;
-
-        // Make pause button interact with soundcloud player
-        function bindTrackPausing() {
-          pauseBtn = document.querySelector('.pause-btn');
-          if(pauseBtn && pauseBtn != null) {
-            pauseBtn.addEventListener('click', function() {
-              if(widget1 && playing) {
-                widget1.pause();
-                pauseBtn.style.color = 'burlywood';
-                playing = false;
-              } else if(widget1 && !playing) {
-                widget1.play();
-                pauseBtn.style.color = 'rgba(87, 79, 36, 0.799)';
-                playing = true;
-              }
-            });
-          }
-        }
-        bindTrackPausing();
-      }, 2000);
-      isBeingSwapped = false;
-    
-     
-    return(
-    <div id={media}>
-      <iframe className={media} frameborder="no" allow="autoplay" 
-        src={formattedSCsrc(url)} 
-        scrolling="no"
-        referrerpolicy="no-referrer-when-downgrade"
-        seamless>
-      </iframe>
-    </div>
-    );
-
-    // Local audio case
-    case 'plik audio':
-      setTimeout(function() {
-        if(document.querySelector('audio')) {
-          const audioPlayer = document.querySelector('audio');
-          audioPlayer.addEventListener('ended', (event) => fName());
-          document.querySelector('.pause-btn').addEventListener('click', () => {
-            if(!audioPlayer.paused) {
-              audioPlayer.pause();
-              pauseBtn.style.color = 'burlywood';
-              playing = false;
-            } else {
-              audioPlayer.play();
-              pauseBtn.style.color = 'rgba(87, 79, 36, 0.799)';
-              playing = true;
-            }
-          });
-          const promise = audioPlayer.play();
-          if (promise !== undefined) {
-            promise.then(_ => {
-              console.log("AUTOIPPALY POSZEDŁ");
-            }).catch(error => {
-              console.log("error atplay !$#$");
-              audioPlayer.muted = true;
-              audioPlayer.play();
-              playing = true;
-            });
-          }
-        }
-      }, 1000);
-
-      let audioFrame;
-      if(document.querySelector('audio') && isBeingSwapped) {
-        document.querySelector('audio').remove(); 
-        isVJSAudioRendered = false;
-        audioFrame = document.createElement('audio');
-        document.querySelector('section#player').appendChild(audioFrame);
-        audioFrame.setAttribute('src', url);
-        audioFrame.setAttribute('controls', true);
-        audioFrame.setAttribute('autoplay', true);
-        isVJSAudioRendered = true;
-        isBeingSwapped = false;
-        break;
-      } else if(!isVJSAudioRendered) {
-        isBeingSwapped = false;
-        return(
-        <div id={media.slice(0,3)}>
-          <audio id="myAudio" controls autoplay>
-            <source src={url} type="audio/mpeg"/>
-          </audio>
-        </div>
-        );
-      } 
-      
-    default:
-      console.log("default media case");
-  }
-}
-
-
-// List item component  
-const Item = ({ index, item, playBtn, deleteBtn }) => (
-  <Draggable index={index} draggableId={item.id}>
-    {(provided, snapshot) => (
-      <li
-        className={randomColor(item.id)}
-        {...provided.draggableProps}
-        {...provided.dragHandleProps}
-        ref = {provided.innerRef}
-      >
-        <button onClick={() => playBtn(item)} class="item-btn play-btn"><i class="arrow right"></i>
-        </button>
-        <span class="item-text" data-media={item.media}>{item.media == 'plik audio' 
-                                                          ? item.fileName : item.trackUrl}</span>
-        <button onClick={() => deleteBtn(item)} class=" item-btn delete-btn">X</button>
-      </li>
-    )}
-  </Draggable>
-);
-
-// DnD list component
-const List = ({ list, onDragEnd, playFunction, deleteFunction }) => (
-  <DragDropContext onDragEnd={onDragEnd}>
-    <Droppable droppableId="droppable">
-      {(provided) => (
-        <ul class="list-group" 
-        {...provided.placeholder} {...provided.droppableProps}
-        ref = {provided.innerRef}>
-          {list.map((item, index) => (
-              <Item key={item.id} index={index} item={item} 
-              playBtn={playFunction} 
-              deleteBtn={deleteFunction} />
-          ))}
-        </ul>
-      )}
-    </Droppable>
-  </DragDropContext>
-);
-
-
-// Transport buttons component
-const TrackNav = (props) => {
-  return(
-    <section id="track-nav">
-      <button 
-      class="nav-btn previous-btn"><i class="arrow left"
-      onClick={props.prevBtn} ></i></button>
-      <button class="pause-btn">||</button>
-      <button 
-      class="nav-btn next-btn"><i class="arrow right"
-      onClick={props.nextBtn} ></i></button>
-    </section>
-  );
-}
-
-
 
 // Main view render
 function App() {
-    const [list, setList] = React.useState(INITIAL_LIST);
+    
+    // Set initial list and state
+    const [list, setList] = React.useState(RETRIEVED_LIST);
     const frameCheck = (list) => {
+      list = formatList(list);
       return list.length
         ? [list[0].media, list[0].trackUrl]
         : [null, null];
@@ -293,9 +15,25 @@ function App() {
       frameMedia: frameCheck(list)[0],
       submitUrl: null,
       frameUrl: frameCheck(list)[1],
-      popUpText: "",
+      popUpText: [],
       popUpDisplay: "none",
-      shuffle: false
+      saveWindowDisplay: "none",
+      loadWindowDisplay: "none",
+      overlayDisplay: "none",
+      shuffle: false,
+      savedPlaylistsIDs: []
+    }); 
+
+    // Await for playlist to be retrieved from IDB and then re-render
+    onLoadConnection.addEventListener('fetch-list', () => {
+      const formatted = formatList(RETRIEVED_LIST);
+      console.log(formatted);
+      setList(list => formatted);
+      setState({
+        ...state,
+        frameMedia: frameCheck(formatted)[0],
+        frameUrl: frameCheck(formatted)[1]
+      });
     }); 
 
     // Radio-select from available media
@@ -305,62 +43,66 @@ function App() {
         ...state,
         submitMedia: radioSelect
       });
-      if(document.querySelector('audio').paused) {
-        setTimeout(function() {
-          document.querySelector('audio').pause();
-        }, 1001);
-      }
+      preventAudioPlay();
     }
 
-    // What happens after track submission
+    // What happens after submitting a track
     const submitTrack = (event) => {
       event.preventDefault();
       let submittedLink = event.target.querySelector('#link-input').value;
       let fileName = null;
       const radioSelect = state.submitMedia;
 
-      // For local audio file
+      // For mp3 file
       if(radioSelect == 'plik audio') {
-        submittedLink = URL.createObjectURL(event.target.querySelector('#file-input').files[0]);
-        const file = event.target.querySelector('#file-input').files[0];
+        submittedLink = event.target.querySelector('#file-input').files[0];
         fileName = event.target.querySelector("#file-input").value.split("fakepath").pop().slice(1);   
       }  
 
-      // url validation
-      if(radioSelect != null && radioSelect != 'plik audio') {
+      // Validate url pasted by the user
+      let popUpText;
+      let isValid;
+      if(radioSelect && radioSelect != 'plik audio') {
         if(!submittedLink.includes(radioSelect.slice(0,5).toLowerCase())) {
           if(submittedLink && submittedLink != null) {
-            setState({
-              ...state,
-              popUpText: "Link nie pochodzi ze wskazanej przez Ciebie platformy... Sprawdź czy Twój wybór jest zgodny.",
-              popUpDisplay: "block"
-            });  
-            return false;
-          } else return false;
-        }
+            popUpText = "Link ma niewłaściwy format lub nie pochodzi ze wskazanej przez Ciebie platformy... Sprawdź czy Twój wybór jest zgodny.";
+          }
+        } else if(submittedLink.includes('on.s')) {
+          popUpText = "Link skrócony z Soundclouda nie zadziała. Wklej go tutaj w standardowej postaci.";
+        } else isValid = true;
+
       } else if(radioSelect != 'plik audio') {
+        popUpText = "Wybierz którąś z platform!";
+      } else isValid = true;
+
+      if(popUpText) {
+        popUpText = [popUpText];
         setState({
           ...state,
-          popUpText: "Wybierz którąś z platform!",
-          popUpDisplay: "block"
+          popUpText: popUpText,
+          popUpDisplay: "alert-block",
+          overlayDisplay: "block"
         });
-        return false;
+        preventAudioPlay();
       }
-      
-      if(submittedLink) {
+
+
+      if(submittedLink && isValid) {
         setState({
           ...state,
           submitUrl: submittedLink
         });
+        list.push({
+          id: (list.length + 1).toString(),
+          media: radioSelect,
+          trackUrl: submittedLink,
+          fileName: fileName
+        });
+        preventAudioPlay();
       }
       
-      list.push({
-        id: (list.length + 1).toString(),
-        media: radioSelect,
-        trackUrl: submittedLink,
-        fileName: fileName
-      });
       
+      // When list was empty before, then set the submitted track as player's source
       if(list.length == 1 && state.frameUrl == null) {
         setState({
           ...state,
@@ -370,15 +112,23 @@ function App() {
       }
       
       if(list.length <= 50) {
-        localStorage.setItem('playlist', JSON.stringify(list));
+        setTimeout(async function() {
+          try {
+            const db = await openIndexedDB(ourDBName);
+            console.log(await saveListToIndexedDB(db, storeID, list, 'playlist00'));
+          } catch (error) {
+            console.error(error);
+          }
+        }, 50);
       } else {
         setState({
           ...state,
           popUpText: "Jeśli chcesz stworzyć playlistę zawierającą więcej niż 50 utworów musisz się zalogować.",
-          popUpDisplay: "block"
+          popUpDisplay: "alert-block",
+          overlayDisplay: "block"
         });
+        preventAudioPlay();
       }
-
       event.target.querySelector('#link-input').value = null;
       event.target.querySelector('#file-input').value = null;
     }
@@ -387,7 +137,6 @@ function App() {
     // DnD stuff
     const handleDragEnd = ({ destination, source }) => {
         if (!destination) return;
-    
         setList(reorder(list, source.index, destination.index));
     }
 
@@ -396,73 +145,123 @@ function App() {
     const playFromList = (item) => {
       isBeingSwapped = true;
       const itemIndex = list.indexOf(item);
+      console.log(item);
       setState({
         ...state,
         frameMedia: item.media,
         frameUrl: item.trackUrl,
       });
 
-      // Outline the style of the played item
+      // Outline currently played item's style
       outlineItem(itemIndex);
       const currentItem = outlineItem(itemIndex);
 
       // Make page reload in case iframe/player is not rendered after 1s
-      // (which presumably points to some error)
+      // (which presumably points to some unknown error)
       setTimeout(function() {
-        if(!document.querySelector('.column #player') && !document.querySelector('section#player iframe')
+        if(!document.querySelector('.column section #player') && !document.querySelector('section#player iframe') 
         && !document.querySelector('audio')) {
-          mayday(currentItem);
+          mayday(currentItem, list);
         }
-      }, 1000);
+      }, 2000);
     }
 
-    // Delete item on button click
+    // Delete item on button click (and save updated playlist to IDB)
     const deleteItem = (target) => {
         const concatted = list.slice(0, list.indexOf(target)).concat(list.slice(list.indexOf(target) + 1));
         setList(list => concatted);
-        localStorage.setItem('playlist', JSON.stringify(concatted));
+        setTimeout(async function() {
+          try {
+            const db = await openIndexedDB(ourDBName);
+            console.log(await saveListToIndexedDB(db, storeID, concatted, 'playlist00'));
+          } catch (error) {
+            console.error(error);
+          }
+        }, 50);
     }
 
     // Hide alert on click
-    const hideAlert = (event) => {
+    const hideAlert = () => {
       setState({
         ...state,
-        popUpDisplay: "none"
+        popUpDisplay: "none",
+        overlayDisplay: "none"
       });
+      preventAudioPlay();
     }
 
     // Play previous track
     const prevTrack = () => {
-      const prevItem = list[list.indexOf(list.find(item => state.frameUrl.includes(item.trackUrl))) - 1];
+      let prevItem;
+      if(state.frameMedia == 'plik audio') {
+        const currFromListTitle = document.querySelector('.bolded-item span').innerText;
+        prevItem = list[list.indexOf(list.find(item => currFromListTitle == item.fileName)) - 1];
+      } else {
+        prevItem = list[list.indexOf(list.find(item => state.frameUrl.includes(item.trackUrl))) - 1];
+      }
       playFromList(prevItem);
     }
 
     // Play next track
     const nextTrack = () => { 
-      let nextItem = list[list.indexOf(list.find(item => state.frameUrl.includes(item.trackUrl))) + 1];
-      if(state.shuffle) {
+      let nextItem;
+      if(state.frameMedia == 'plik audio') {
+        const currFromListTitle = document.querySelector('.bolded-item span').innerText;
+        nextItem = list[list.indexOf(list.find(item => currFromListTitle == item.fileName)) + 1];
+        if(state.shuffle) {
+          const filteredList = list.filter(item => item != nextItem);
+          nextItem = filteredList[parseInt(Math.random() * (filteredList.length - 1))];
+        }
+      } else if(state.shuffle) {
         const filteredList = list.filter(item => !state.frameUrl.includes(item.trackUrl));
         nextItem = filteredList[parseInt(Math.random() * (filteredList.length - 1))];
+      } else {
+        nextItem = list[list.indexOf(list.find(item => state.frameUrl.includes(item.trackUrl))) + 1];
       }
+      console.log(nextItem);
       playFromList(nextItem);
     }
 
-    // Clear playlist
-    const clearList = () => {
-      setList(list => []);
-      localStorage.setItem('playlist', null);
+
+    // Save playlist window
+    const showSaveWindow = () => {
+      if(state.savedPlaylistsIDs.length >= 10) {
+        setState({
+          ...state,
+          popUpDisplay: "alert-block",
+          popUpText: ["Masz osiągnięty limit dziesięciu playlist. Aby usunąć którąś z nich przejdź do menu 'wczytaj playlistę'."],
+          overlayDisplay: "block"
+        });
+      } else {
+        setState({
+          ...state,
+          saveWindowDisplay: "block",
+          overlayDisplay: "block"
+        });
+      }
+      preventAudioPlay();
     }
 
-    // Save playlist info
-    const tbaAlert = () => {
-      setState({
-        ...state,
-        popUpText: "Obecnie Twoja aktualna playlista zapisuje się za każdym razem w pamięci lokalnej Twojej przeglądarki (lecz bez lokalnych plików audio). W niedługim czasie planujemy uruchomić możliwość rejestracji i zapisywania większej ilości playlist. Stay tuned...",
-        popUpDisplay: "block"
-      });
+    // Load playlist window
+    const showLoadWindow = () => {
+      (async () => {
+        try {
+           retrievedKeys = await retrieveKeysFromStore();
+           setState({
+            ...state,
+            loadWindowDisplay: "block",
+            overlayDisplay: "block",
+            savedPlaylistsIDs: retrievedKeys.filter(item => item != 'playlist00')
+           });
+           preventAudioPlay();
+        } catch (error) {
+          console.error("Error retrieveing keys from store: ", error);
+        }
+      })();
     }
+    
 
-    // Shuffle button
+    // Shuffle button logic
     const shuffle = (event) => {
       const shuffleBtn = event.target;
       if(state.shuffle) {
@@ -479,12 +278,13 @@ function App() {
         });
         shuffleBtn.textContent = 'shuffle on';
         shuffleBtn.style.color = 'burlywood';
-      }
+      } 
+      preventAudioPlay();
     }
 
     // Prevent YouTube API from embedding 2 players at the same time
     setInterval(function() {
-      if(document.querySelector('#app ~ #player')) {
+      if(document.querySelector('#app ~ iframe#player')) {
         const playerSrc = document.querySelector('#app ~ iframe#player').getAttribute('src');
         const extractedID = playerSrc.split('embed/')[1].slice(0,9);
         const foundItem = list.find(item => item.trackUrl.includes(extractedID));
@@ -496,6 +296,87 @@ function App() {
         });
       }
     }, 800);
+
+    // Handle playlist saving
+    const handlePlaylistSaving = (event) => {
+      event.preventDefault();
+      const playlistTitle = event.target.querySelector('#title-input').value;
+      if(playlistTitle) {
+        setTimeout(async function() {
+          try {
+            const db = await openIndexedDB(ourDBName);
+            console.log(await saveListToIndexedDB(db, storeID, list, playlistTitle));
+          } catch (error) {
+            console.error(error);
+          }
+        }, 50);
+        event.target.querySelector('#title-input').value = null;
+        setState({
+          ...state,
+          saveWindowDisplay: "none",
+          overlayDisplay: "none"
+        }); 
+        preventAudioPlay();
+      } else return false;
+    }
+
+    // Close save window
+    const closeSaveWindow = (event) => {
+      setState({
+        ...state,
+        saveWindowDisplay: "none",
+        overlayDisplay: "none"
+      });
+      preventAudioPlay();
+      event.target.nextElementSibling.querySelector('#title-input').value = null;
+    }
+
+    // Close load window
+    const closeLoadWindow = () => {
+      setState({
+        ...state,
+        loadWindowDisplay: "none",
+        overlayDisplay: "none"
+      });
+      preventAudioPlay();
+    }
+
+    // Load selected playlist from IDB
+    const loadPlaylist = (event) => {
+      event.preventDefault();
+      const inputs = event.target.querySelectorAll('.radio-box');
+      const pickedTitle = [...inputs].find(input => input.checked).value;
+      setState({
+        ...state,
+        loadWindowDisplay: "none",
+        overlayDisplay: "none"
+      });
+      onLoadConnection.retrieveList(pickedTitle); 
+    }
+
+    // Delete playlist from IDB
+    const deletePlaylist = (event) => {
+      event.preventDefault();
+      const playlistTitle = event.target.parentElement.querySelector('label').innerText;
+      onLoadConnection.deletePlaylistFromIDB(playlistTitle);
+      const filteredTitles = state.savedPlaylistsIDs.filter(item => item != playlistTitle);
+      setState({
+        ...state,
+        savedPlaylistsIDs: filteredTitles
+      });
+      preventAudioPlay();
+    }
+
+    // Show info
+    const showInfo = () => {
+      setState({
+        ...state,
+        popUpText: infoText,
+        popUpDisplay: "info-text",
+        overlayDisplay: "block"
+      });
+      preventAudioPlay();
+    }
 
     return(
       <div>
@@ -518,8 +399,8 @@ function App() {
             <div class="column">
               <section id="player">
                 <TrackFrame media={state.frameMedia} 
-                            url={state.frameUrl}
-                            fName={nextTrack}/>
+                            trackURL={state.frameUrl}
+                            nextTrackFunc={nextTrack}/>
               </section>
             </div>
 
@@ -536,18 +417,34 @@ function App() {
           <section id="special-buttons">
             <ul>
             <li class="page-item">
-              <button class="page-link" onClick={tbaAlert}>zapisz playlistę</button>
+              <button class="page-link" onClick={showSaveWindow}>zapisz playlistę</button>
             </li>
             <li class="page-item">
-                <button class="page-link clear-btn" onClick={clearList}>wyczyść playlistę
+                <button class="page-link clear-btn" onClick={showLoadWindow}>wczytaj playlistę
                 </button>
               </li>
             </ul>
           </section>
 
 
-          <div id="alert" className={state.popUpDisplay}>{state.popUpText} <br></br>
+          <div id="alert" className={state.popUpDisplay}> {state.popUpText.map((item) => {
+            return <p>{item}</p>;
+                })}
             <button onClick={hideAlert}>OK</button>
+          </div>
+
+          <SaveForm display={state.saveWindowDisplay} saveFunc={handlePlaylistSaving}
+                    xFunc={closeSaveWindow}>
+          </SaveForm>
+
+          <LoadForm display={state.loadWindowDisplay} titles={state.savedPlaylistsIDs}
+                    loadFunc={loadPlaylist} xFunc={closeLoadWindow} deleteFunc={deletePlaylist}>
+          </LoadForm>
+
+          <Overlay display={state.overlayDisplay}></Overlay>
+
+          <div id="info-btn">
+            <button onClick={showInfo}>?</button>
           </div>
        
       </div>
