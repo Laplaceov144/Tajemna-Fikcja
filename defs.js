@@ -125,6 +125,7 @@ const mayday = (curr, list) => {
         });
         saveListPromise.then(_ => {
           location.reload();
+          //console.log("reload mayday");
         });
       } catch (error) {
         console.error(error);
@@ -132,38 +133,47 @@ const mayday = (curr, list) => {
     })();
 }
 
-
-// Additional pause button functionality
-window.onload = () => {
-    navBtns = document.querySelectorAll('.nav-btn');
-    pauseBtn = document.querySelector('.pause-btn');
-    navBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        pauseBtn.style.color = 'rgba(87, 79, 36, 0.799)';
-        playing = false;
-      });
-    });
-    if(document.querySelector('audio')) {
-      const audioPlayer = document.querySelector('audio');
-      pauseBtn.addEventListener('click', () => {
-        if(audioPlayer.play()) {
-          audioPlayer.pause();
-          pauseBtn.style.color = 'burlywood';
-          playing = false;
-        } else {
-          audioPlayer.play();
-          pauseBtn.style.color = 'rgba(87, 79, 36, 0.799)';
-          playing = true;
-        }
-      });
-    }
-  }
-
-
-// Outline first item from list when page (re)loads
-window.onload = () => {
-  setTimeout(outlineItem(0), 2500);
+// Handle YT frame exception
+const handleYTFrameException = () => {
+  const appDOM = document.querySelector('#app');
+  const unwantedYTPlayer = document.querySelector('iframe#player');
+  let fixedList = [];
+  if(!appDOM && unwantedYTPlayer) {
+    const extractedID = unwantedYTPlayer.getAttribute('src').split('embed/')[1].slice(0,9);
+      try {
+        const retrievePromise = new Promise((resolve, reject) => {
+          fixedList = retrieveFromIndexedDB(ourDBName, storeID, 'playlist00');
+        });
+        retrievePromise.then(_ => {
+          fixedList = fixedList.filter(item => !item.trackUrl.includes(extractedID));
+          (async () => {
+            try {
+              const db = await openIndexedDB(ourDBName);
+              const saveListPromise = new Promise((resolve, reject) => {
+                resolve(saveListToIndexedDB(db, storeID, fixedList, 'playlist00'));
+              });
+              saveListPromise.then(_ => {
+                location.reload();
+              });
+            } catch (error) {
+              console.error(error);
+            }
+          })();
+        });
+      } catch(error) {
+        console.log(error);
+      }
+  } else return false;
 }
+
+window.onload = () => {
+
+    // Outline first item from list when page (re)loads
+    setTimeout(outlineItem(0), 2500);
+    setTimeout(handleYTFrameException, 2500);
+}
+
+
 
 // Prevent unwanted autoplay on audio element
 const preventAudioPlay = () => {

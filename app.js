@@ -27,7 +27,6 @@ function App() {
     // Await for playlist to be retrieved from IDB and then re-render
     onLoadConnection.addEventListener('fetch-list', () => {
       const formatted = formatList(RETRIEVED_LIST);
-      console.log(formatted);
       setList(list => formatted);
       setState({
         ...state,
@@ -157,10 +156,10 @@ function App() {
       outlineItem(itemIndex);
       const currentItem = outlineItem(itemIndex);
 
-      // Make page reload in case iframe/player is not rendered after 1s
+      // Make page reload in case iframe/player is not rendered after 2s
       // (which presumably points to some unknown error)
       setTimeout(function() {
-        if(!document.querySelector('.column section #player') && !document.querySelector('section#player iframe') 
+        if(!document.querySelector('.column #player') && !document.querySelector('section#player iframe') 
         && !document.querySelector('audio')) {
           mayday(currentItem, list);
         }

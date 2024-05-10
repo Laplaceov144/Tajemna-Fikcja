@@ -8,6 +8,13 @@ const SCAPI = window.SC.Widget;
 // Main player component
 const TrackFrame = React.memo((props) => {
     
+    // Removing all event listeners from external pause button
+    let pauseBtn = document.querySelector('.pause-btn');
+    if(pauseBtn) {
+      pauseBtn.style.color = 'rgba(87, 79, 36, 0.799)';
+      pauseBtn.replaceWith(pauseBtn.cloneNode(true));
+    }
+
     switch(props.media) {
   
       // YouTube case
@@ -225,7 +232,7 @@ const TrackFrame = React.memo((props) => {
                   pauseBtn.style.color = 'burlywood';
                   playing = false;
                 } else if(spotifyController && !playing) {
-                  spotifyController.play();
+                  //spotifyController.play();
                   pauseBtn.style.color = 'rgba(87, 79, 36, 0.799)';
                   playing = true;
                 }
@@ -254,11 +261,11 @@ const TrackFrame = React.memo((props) => {
             document.querySelector('.pause-btn').addEventListener('click', () => {
               if(!audioPlayer.paused) {
                 audioPlayer.pause();
-                pauseBtn.style.color = 'burlywood';
+                document.querySelector('.pause-btn').style.color = 'burlywood';
                 playing = false;
               } else {
                 audioPlayer.play();
-                pauseBtn.style.color = 'rgba(87, 79, 36, 0.799)';
+                document.querySelector('.pause-btn').style.color = 'rgba(87, 79, 36, 0.799)';
                 playing = true;
               }
             });
@@ -285,7 +292,6 @@ const TrackFrame = React.memo((props) => {
         // Vanilla JS algorithm
         let audioFrame;
         if(document.querySelector('audio') && isBeingSwapped) {
-          console.log("idzie VJS audio");
           document.querySelector('audio').remove(); 
           isVJSAudioRendered = false;
           audioFrame = document.createElement('audio');
