@@ -13,6 +13,7 @@ contourpy==1.2.1
 cycler==0.12.1
 distlib==0.3.8
 Django==5.0.6
+dj-database-url>=2,<3
 django-ipware==7.0.1
 dnspython==2.6.1
 einops==0.8.0
@@ -97,4 +98,5 @@ uvloop==0.19.0
 virtualenv==20.25.1
 watchfiles==0.21.0
 websockets==11.0.3
+whitenoise[brotli]>=6,<7
 wsproto==1.2.0
