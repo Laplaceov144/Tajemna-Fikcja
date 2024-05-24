@@ -1,1 +1,1 @@
-web: gunicorn tajemna-fikcja.wsgi
+web: gunicorn TF_Project.wsgi
