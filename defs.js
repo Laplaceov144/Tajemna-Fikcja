@@ -188,6 +188,7 @@ window.onload = () => {
     // Outline first item from list when page (re)loads
     setTimeout(outlineItem(0), 2500);
     setTimeout(handleYTFrameException, 2500);
+    setTimeout(enableAutoplay, 3500);
 }
 
 

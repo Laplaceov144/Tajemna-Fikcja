@@ -204,6 +204,7 @@ function App() {
         nextItem = filteredList[parseInt(Math.random() * (filteredList.length - 1))];
       } else {
         nextItem = list[list.indexOf(list.find(item => state.frameUrl.includes(item.trackUrl))) + 1];
+        if(!nextItem) nextItem = list[0];
       }
       playFromList(nextItem);
     }

@@ -325,28 +325,11 @@ const TrackFrame = React.memo((props) => {
           console.log("~~~~~~~ IDZIE REACT AUDIO");
           isBeingSwapped = false;
           const audioUrl = URL.createObjectURL(props.trackURL);
+
           setTimeout(() => {
-            const audioFrame = document.querySelector('audio');
-            audioFrame.onloadeddata = () => {
-              URL.revokeObjectURL(audioUrl);
-            }
+            URL.revokeObjectURL(audioUrl);
+          }, 7000);
 
-            // ~~~~~~~~~~~~~
-            if(!audioFrame) {
-              console.log("~~~~~~~ IDZIE REACT AUDIO DRUGA PROBA");
-              const audioUrl = URL.createObjectURL(props.trackURL);
-              return(
-                <div id={props.media.slice(0,3)}>
-                  <audio controls autoplay>
-                    <source src={audioUrl} type="audio/mpeg"/>
-                  </audio>
-                </div>
-                );
-            };
-            // ~~~~~~~~~~~~~~
-
-
-          }, 2000);
           return(
           <div id={props.media.slice(0,3)}>
             <audio controls autoplay>
