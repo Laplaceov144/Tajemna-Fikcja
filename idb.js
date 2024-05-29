@@ -123,11 +123,12 @@ let RETRIEVED_LIST = [];
 let retrievedKeys = [];
 
 class IDBPlaylistConnection extends EventTarget {
-  retrieveList(playlistID) {
+  retrieveList(playlistID, isUserLoading) {
     (async () => {
       try {
           RETRIEVED_LIST = await retrieveFromIndexedDB(ourDBName, storeID, playlistID);
           this.dispatchEvent(new Event('fetch-list'));
+          if(isUserLoading) this.savePlaylistAsDefault(RETRIEVED_LIST);
       } catch (error) {
           console.error('An error occurred while retrieving data:', error);
           RETRIEVED_LIST = [];
@@ -155,9 +156,20 @@ class IDBPlaylistConnection extends EventTarget {
       }
     })();
   }
+  savePlaylistAsDefault(list) {
+    (async () => {
+      try {
+        const db = await openIndexedDB(ourDBName);
+        console.log(list);
+        console.log(await saveListToIndexedDB(db, storeID, list, 'playlist00'));
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+  }
 }
 const onLoadConnection = new IDBPlaylistConnection();
-onLoadConnection.retrieveList('playlist00');
+onLoadConnection.retrieveList('playlist00', false);
 
 
 

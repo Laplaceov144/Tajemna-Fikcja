@@ -140,7 +140,8 @@ const mayday = (curr, list) => {
           resolve(saveListToIndexedDB(db, storeID, reorderedList, 'playlist00'));
         });
         saveListPromise.then(_ => {
-          location.reload();
+          console.log("~~~~~ mayday reload ~~~~~");
+          //location.reload();
         });
       } catch (error) {
         console.error(error);
@@ -158,6 +159,7 @@ const handleYTFrameException = () => {
       try {
         const retrievePromise = new Promise((resolve, reject) => {
           fixedList = retrieveFromIndexedDB(ourDBName, storeID, 'playlist00');
+          resolve(fixedList);
         });
         retrievePromise.then(_ => {
           fixedList = fixedList.filter(item => !item.trackUrl.includes(extractedID));

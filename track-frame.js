@@ -19,6 +19,7 @@ const TrackFrame = React.memo((props) => {
   
       // YouTube case
       case 'YouTube':
+        console.log("~~~~~~~ IDZIE YT CASE");
         if(isVJSAudioRendered && document.querySelector('audio')) {
           document.querySelector('audio').remove();
           isVJSAudioRendered = false;
@@ -42,9 +43,14 @@ const TrackFrame = React.memo((props) => {
   
         // Force autoplay
         function onPlayerReady(event) {
-          event.target.playVideo();
+          const promise = event.target.playVideo();
           playing = true;
           document.querySelector('.pause-btn').style.color = 'rgba(87, 79, 36, 0.799)';
+          if(promise == undefined) {
+            event.target.mute();
+            event.target.playVideo();
+            setTimeout(event.target.unMute(), 250);
+          } else playing = false;
         }
   
         // Make playlist jump to next track when YT video ends
@@ -116,7 +122,7 @@ const TrackFrame = React.memo((props) => {
   
       // Soundcloud case  
       case 'soundcloud':
-  
+        console.log("~~~~~~~ IDZIE SC CASE");
         // Remove audio or Spotify elements in case they're still there
         if(isVJSAudioRendered && document.querySelector('audio')) {
           document.querySelector('audio').remove();
@@ -169,7 +175,7 @@ const TrackFrame = React.memo((props) => {
       
       // Spotify case
       case 'spotify':
-
+        console.log("~~~~~~~ IDZIE SPOTIFY CASE");
       if(document.querySelector('#spotify')) {
         if(isBeingSwapped) {
           document.querySelector('#spotify').remove(); 
@@ -235,7 +241,7 @@ const TrackFrame = React.memo((props) => {
                 } else if(spotifyController && !playing) {
                   //spotifyController.play();
                   pauseBtn.style.color = 'rgba(87, 79, 36, 0.799)';
-                  playing = true;
+                  //playing = true;
                 }
               });
             }
@@ -286,6 +292,7 @@ const TrackFrame = React.memo((props) => {
                 });
               } 
               autoplayFalseFlag = false;
+              playing = true;
             }
           }
         }, 1000);
@@ -293,6 +300,7 @@ const TrackFrame = React.memo((props) => {
         // Vanilla JS algorithm
         let audioFrame;
         if(document.querySelector('audio') && isBeingSwapped) {
+          console.log("~~~~~~~ IDZIE VJS AUDIO");
           document.querySelector('audio').remove(); 
           isVJSAudioRendered = false;
           audioFrame = document.createElement('audio');
@@ -314,6 +322,7 @@ const TrackFrame = React.memo((props) => {
           }
           
           // React algorithm
+          console.log("~~~~~~~ IDZIE REACT AUDIO");
           isBeingSwapped = false;
           const audioUrl = URL.createObjectURL(props.trackURL);
           setTimeout(() => {
@@ -321,6 +330,22 @@ const TrackFrame = React.memo((props) => {
             audioFrame.onloadeddata = () => {
               URL.revokeObjectURL(audioUrl);
             }
+
+            // ~~~~~~~~~~~~~
+            if(!audioFrame) {
+              console.log("~~~~~~~ IDZIE REACT AUDIO DRUGA PROBA");
+              const audioUrl = URL.createObjectURL(props.trackURL);
+              return(
+                <div id={props.media.slice(0,3)}>
+                  <audio controls autoplay>
+                    <source src={audioUrl} type="audio/mpeg"/>
+                  </audio>
+                </div>
+                );
+            };
+            // ~~~~~~~~~~~~~~
+
+
           }, 2000);
           return(
           <div id={props.media.slice(0,3)}>

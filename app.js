@@ -113,14 +113,7 @@ function App() {
       }
       
       if(list.length <= 50) {
-        setTimeout(async function() {
-          try {
-            const db = await openIndexedDB(ourDBName);
-            console.log(await saveListToIndexedDB(db, storeID, list, 'playlist00'));
-          } catch (error) {
-            console.error(error);
-          }
-        }, 50);
+        onLoadConnection.savePlaylistAsDefault(list);
       } else {
         setState({
           ...state,
@@ -170,14 +163,7 @@ function App() {
     const deleteItem = (target) => {
         const concatted = list.slice(0, list.indexOf(target)).concat(list.slice(list.indexOf(target) + 1));
         setList(list => concatted);
-        setTimeout(async function() {
-          try {
-            const db = await openIndexedDB(ourDBName);
-            console.log(await saveListToIndexedDB(db, storeID, concatted, 'playlist00'));
-          } catch (error) {
-            console.error(error);
-          }
-        }, 50);
+        onLoadConnection.savePlaylistAsDefault(concatted);
         preventAudioPlay();
     }
 
@@ -283,33 +269,33 @@ function App() {
     }
 
     // Prevent YouTube API from embedding 2 players at the same time
-    setInterval(function() {
-      if(document.querySelector('#app ~ iframe#player')) {
-        const playerSrc = document.querySelector('#app ~ iframe#player').getAttribute('src');
-        const extractedID = playerSrc.split('embed/')[1].slice(0,9);
-        const foundItem = list.find(item => item.trackUrl.includes(extractedID));
-        document.querySelector('#app ~ #player').remove();
-        setState({
-          ...state,
-          frameUrl: foundItem.trackUrl,
-          frameMedia: 'YouTube'
-        });
-      }
-    }, 800);
+    // setInterval(function() {
+    //   if(document.querySelector('#app ~ iframe#player')) {
+    //     const playerSrc = document.querySelector('#app ~ iframe#player').getAttribute('src');
+    //     const extractedID = playerSrc.split('embed/')[1].slice(0,9);
+    //     const foundItem = list.find(item => item.trackUrl.includes(extractedID));
+    //     document.querySelector('#app ~ #player').remove();
+    //     setState({
+    //       ...state,
+    //       frameUrl: foundItem.trackUrl,
+    //       frameMedia: 'YouTube'
+    //     });
+    //   }
+    // }, 800);
 
     // Handle playlist saving
     const handlePlaylistSaving = (event) => {
       event.preventDefault();
       const playlistTitle = event.target.querySelector('#title-input').value;
       if(playlistTitle) {
-        setTimeout(async function() {
+        (async function() {
           try {
             const db = await openIndexedDB(ourDBName);
             console.log(await saveListToIndexedDB(db, storeID, list, playlistTitle));
           } catch (error) {
             console.error(error);
           }
-        }, 50);
+        })();
         event.target.querySelector('#title-input').value = null;
         setState({
           ...state,
@@ -351,8 +337,9 @@ function App() {
         loadWindowDisplay: "none",
         overlayDisplay: "none"
       });
-      onLoadConnection.retrieveList(pickedTitle); 
+      onLoadConnection.retrieveList(pickedTitle, true);
     }
+   
 
     // Delete playlist from IDB
     const deletePlaylist = (event) => {
