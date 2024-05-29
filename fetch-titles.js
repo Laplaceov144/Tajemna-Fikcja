@@ -107,6 +107,5 @@ function handleMultipleURLs() {
 }
 
 // Execution
-//handleMultipleURLs();
 setInterval(handleMultipleURLs, 5000);
 
