@@ -7,23 +7,19 @@ function enableAutoplay() {
     var mediaElements = document.querySelectorAll('audio, iframe');
     mediaElements.forEach(function(element) {
       element.autoplay = true;
-      element.load(); // If necessary, reload the media element to apply the autoplay
+      element.load();
     });
   }
   
-  // Function to check and restore the autoplay setting on page load
   function restoreAutoplaySetting() {
-    // Get autoplay preference from localStorage
     var autoplaySetting = localStorage.getItem('autoplay');
     
     if (autoplaySetting === 'true') {
-      enableAutoplay(); // Enable autoplay if the setting was saved as true
+      enableAutoplay(); 
     }
   }
+
   
-  // Event listener for the button
-  //document.addEventListener('click', enableAutoplay);
-  
-  // Call restoreAutoplaySetting on page load
+  // Execute
   window.addEventListener('DOMContentLoaded', restoreAutoplaySetting);
   
