@@ -140,8 +140,8 @@ const mayday = (curr, list) => {
           resolve(saveListToIndexedDB(db, storeID, reorderedList, 'playlist00'));
         });
         saveListPromise.then(_ => {
-          console.log("~~~~~ mayday reload ~~~~~");
-          //location.reload();
+          //console.log("~~~~~ mayday reload ~~~~~");
+          location.reload();
         });
       } catch (error) {
         console.error(error);
