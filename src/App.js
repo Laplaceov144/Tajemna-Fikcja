@@ -113,7 +113,7 @@ export default class App extends Component {
                     this.idbConn.savePlaylistAsDefault(fetchedList);
                     this.throwAlert("Import z linku zakończony powodzeniem!");
                     setTimeout(() => {
-                        window.location.href = 'http://localhost:8080/';
+                        window.location.href = 'http://tajemnafikcjaplejlisty.netlify.app/';
                     }, 2500);
                 }
 
