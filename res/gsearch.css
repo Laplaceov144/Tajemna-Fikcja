@@ -1,0 +1,49 @@
+
+.search-container {
+    margin-bottom: 20px;
+}
+#results ul {
+    margin-top: -66vh;
+    margin-left: 6.5vw;
+    display: inline-flex;
+    justify-content: space-between;
+    width: 90vw;
+    overflow-x: scroll;
+    list-style: none;
+}
+.result-item {
+    border-bottom: 1px solid #ddd;
+    margin-top: -5vh;
+    margin-right: 5vw;
+    padding: 10px 0;
+    width: 20vw;
+}
+.result-item h3 {
+    margin-top: 5vh;
+    font-size: 1rem;
+}
+.result-item img {
+    width: 12.5vw;
+    height: auto;
+    border-radius: 10%;
+}
+.result-item a {
+    color: #1a0dab;
+    text-decoration: none;
+}
+.result-item p {
+    margin: 5px 0 0;
+    font-size: 0.75rem;
+    width: 10vw;
+    height: 10vh;
+    line-height: 0.8rem;
+    overflow-x: clip;
+    overflow-y: clip;
+}
+.results-google-drive, .results-plik {
+    margin-top: 50vh;
+}
+.results-spotify, .results-null {
+    margin-top: 60vh;
+}
+
