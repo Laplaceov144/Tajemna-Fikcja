@@ -1,0 +1,36 @@
+
+@media screen and (min-height: 680px) {
+    #search-btns {
+        margin-top: -2vh;
+    }
+    #list-plik {
+        margin-top: 2vh;
+    }
+    section#results {
+        margin-top: 10vh;
+    }
+    .results-spotify {
+        position: fixed;
+        z-index: 50;
+        transform: translateY(60vh);
+    }
+    .results-spotify .results-section {
+        min-height: 400px;
+    }
+    .results-spotify .result-item {
+        transform: translateX(5vw) translateY(5vh);
+    }
+    #special-buttons {
+        margin-top: -2vh;
+    }
+    .hash-fit-YouTube, .hash-fit-soundcloud, .hash-fit-twitch, .hash-fit-vimeo, .hash-fit-mixcloud, .hash-fit-dailymotion {
+        transform: translateX(-5vw) translateY(10vh);
+    }
+    .info-fit-YouTube, .info-fit-soundcloud, .info-fit-twitch, .info-fit-vimeo, .info-fit-mixcloud, .info-fit-dailymotion {
+        transform: translateY(30vh);
+    }
+    .info-fit-spotify, .info-fit-plik {
+        transform: translateY(60vh);
+    }
+
+}
