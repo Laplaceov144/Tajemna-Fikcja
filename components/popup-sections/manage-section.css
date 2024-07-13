@@ -1,0 +1,41 @@
+.mgmt-fit-plik {
+    margin-top: 45vh;
+}
+.mgmt-fit-spotify {
+    margin-top: 65vh;
+}
+.trash-btn {
+    margin-left: -0.11vw;
+}
+#mng-btns-bar button {
+    margin-bottom: 5px;
+    padding: 10px 10px 10px 10px;
+}
+
+#mgmt .close-search {
+    margin-top: -72.5vh;
+    margin-left: 65vw;
+}
+
+#hashLink, .hash-btn {
+    margin-top: -65vh;
+    margin-left: 35vw;
+}
+
+#info {
+    margin-top: -77.5vh;
+    overflow-y: scroll;
+}
+#info .close-search {
+    margin-top: -2.5vh;
+}
+#info-topics li {
+    margin-bottom: -2vh;
+    color: var(--clr-btns);
+}
+.info-fit-spotify, .info-fit-null{
+    transform: translateY(65vh);
+}
+.info-fit-plik {
+    transform: translateY(50vh);
+}
