@@ -19,5 +19,6 @@
   },
   "scripts": {
     "start": "webpack-dev-server --hot"
-  }
+  },
+  "type": "module"
 }
