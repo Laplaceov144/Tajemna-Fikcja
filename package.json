@@ -18,7 +18,8 @@
     "webpack-dev-server": "^5.0.4"
   },
   "scripts": {
-    "start": "webpack-dev-server --hot"
+    "start": "webpack-dev-server --hot",
+    "build": "webpack --mode production"
   },
   "type": "module"
 }
