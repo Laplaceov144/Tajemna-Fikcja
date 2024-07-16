@@ -1,3 +1,4 @@
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
 module.exports = {
@@ -27,6 +28,12 @@ module.exports = {
       },
     historyApiFallback: true
   },
-  mode: process.env.NODE_ENV == 'production' ? 'production' : 'development'
+  mode: process.env.NODE_ENV == 'production' ? 'production' : 'development',
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: './index.html',
+      filename: 'index.html'
+    })
+  ],
 }
 
