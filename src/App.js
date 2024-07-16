@@ -86,7 +86,7 @@ export default class App extends Component {
         this.attachSpaceKeyEventHandler();
         
         // Handling hash code from window URL
-        const hashLink = window.location.href.split('/').pop();
+        const hashLink = window.location.href.split('/#').pop();
         if(hashLink) {
             let fetchedList = [];
             const fetchPromise = new Promise(resolve => {
@@ -532,7 +532,7 @@ export default class App extends Component {
                 </section>
 
                 <HashLinkWindow display={hashLinkClass}
-                    hashCode={this.state.hashCode}
+                    hashCode={'#' + this.state.hashCode}
                     onClose={() => this.closeWindow('hashLink')}
                 />
                 <Overlay display={this.state.overlayDisplay}/>
