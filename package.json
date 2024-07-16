@@ -20,6 +20,5 @@
   "scripts": {
     "start": "webpack-dev-server --hot",
     "build": "webpack --mode production"
-  },
-  "type": "module"
+  }
 }
