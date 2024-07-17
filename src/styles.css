@@ -514,12 +514,17 @@ iframe#player {
     }
     .stored-item label {
         padding-left: 5px;
-        width: 9vw;
-        font-size: 1.1rem;
+        width: 15vw;
         font-weight: bold;
         text-align: center;
         color: var(--clr-window-border);
         margin-top: 2px;
+    }
+    .label-short {
+        font-size: 1.1rem;
+    }
+    .label-long {
+        font-size: 0.8rem;
     }
     .stored-lists .delete-btn {
         position: relative;

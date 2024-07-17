@@ -141,7 +141,9 @@ export class ManageSection extends Component {
                                         onClick={(event) => this.checkRadioBox(event)}>
                                     <input type="radio" name="playlist-title"
                                         value={item} className="radio-box"></input>
-                                    <label for="playlist-title">{item}</label>
+                                    <label className={item.length < 18 ? "label-short" : "label-long"}
+                                        for="playlist-title">{item}
+                                    </label>
                                     <button className="delete-btn" 
                                         onClick={() => this.deletePlaylist(item)}>
                                         <i className="fa fa-trash-o trash-btn"></i>
