@@ -250,6 +250,12 @@ export default class App extends Component {
         this.setList(reorderedList);
     }
 
+    handleExportOnMobileDevice = () => {
+        if(navigator.userAgentData.mobile) {
+            this.generateHashLink();
+        } else return false;
+    }
+
     handlePlayerError = () => {
         this.throwAlert("Błąd odtwarzacza. Załadowano następny utwór.");
         setTimeout(this.nextTrack, 2000);
@@ -375,6 +381,8 @@ export default class App extends Component {
     }
 
     toggleExportBtns = (val) => {
+        if(navigator.userAgentData.mobile) return;
+        
         const exportBtns = document.querySelectorAll('.dropdown ~ ul li');
         [...exportBtns].forEach(item => {
             item.className = 'page-item ' + val;
@@ -441,9 +449,10 @@ export default class App extends Component {
                                 onClick={this.showMgmtWindow}>zarządzaj plejlistami
                             </button>
                         </li>
-                        <li className='page-item'> 
+                        <li className='page-item'>
                             <button className='page-link dropdown'
                                 onMouseEnter={() => this.toggleExportBtns('hovered')}
+                                onClick={() => this.handleExportOnMobileDevice}
                             >eksportuj plejlistę
                             </button>
                             <ul className='hidden-list'>

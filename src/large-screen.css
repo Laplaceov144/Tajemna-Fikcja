@@ -1,5 +1,5 @@
 
-@media screen and (min-height: 680px) {
+@media screen and (min-width: 1024px) and (min-height: 680px) {
     #search-btns {
         margin-top: -2vh;
     }
