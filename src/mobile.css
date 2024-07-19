@@ -1,0 +1,110 @@
+@media screen and (max-width: 435px) {
+    #track-form {
+        position: absolute;
+        width: 100%;
+        margin-left: 39vw;
+    }
+    #link-input {
+        width: 50%;
+        margin-left: -34vw;
+    }
+    #track-form > * {
+        font-size: 0.8rem;
+    }
+    #search-btns {
+        position: absolute;
+        margin-top: -1vh;
+        margin-left: -33.5vw;
+    }
+    #search-btns li button {
+        font-size: 0.45rem;
+        padding: 0.4rem;
+    }
+
+    section#results {
+        position: fixed;
+        z-index: 10;
+        width: 100%;
+        margin-top: 62.5vh;
+        margin-left: -5vw;
+    }
+    .results-section {
+        margin-top: 10vh;
+    }
+    #results ul li {
+        margin-top: -2vh;
+    }
+    #results ul {
+        margin-top: 0;
+    }
+    #player > div {
+        position: fixed;
+        margin-top: 0;
+        margin-left: 15vw;
+    }
+    .react-player {
+        margin-top: -7.5vh;
+        margin-left: -50vw;
+        transform: scale(0.5);
+    }
+    #volume-slider {
+        display: none;
+    }
+
+    #track-nav {
+        margin-top: -37.5vh;
+        margin-left: 20vw;
+    }
+    .track-nav-soundcloud, .track-nav-YouTube, .track-nav-twitch, .track-nav-vimeo, .track-nav-mixcloud, .track-nav-dailymotion {
+        transform: translateX(-10vw) translateY(65vh) scale(0.5);
+    }
+    #pause-btn {
+        margin-left: 7.5vw;
+        margin-right: 7.5vw;
+    }
+    #shuffle-btn {
+        margin-left: 50vw;
+    }
+    #rp-jump-btn {
+        transform: translateX(25vw) translateY(-13.5vh);
+    }
+
+    #special-buttons {
+        margin-top: 47.5vh;
+    }
+    #special-buttons .page-item, .dd-btn {
+        font-size: 0.55rem;
+    }
+    button.dropdown {
+        margin-left: 15vw; 
+        width: 35vw;   
+    }
+    #export-btn {
+        margin-top: 0vh;
+        margin-left: 48vw;
+    }
+
+    .column .list-group {
+        margin-top: 55vh;
+    }
+    #list-spotify {
+        margin-left: -12vw;
+    }
+
+    .play-btn {
+        height: 2.5vh;
+    }
+    .play-btn .arrow {
+        margin-left: -1vw;
+        margin-bottom: 0.8vh;
+    }
+    .delete-btn {
+        padding: 0;
+        height: 4vh;
+    }
+
+    .item-text {
+        font-size: 0.45rem;
+    }
+
+}
