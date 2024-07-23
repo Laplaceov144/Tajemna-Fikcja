@@ -579,7 +579,7 @@ iframe#player {
 }
 
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 760px) {
     #track-nav {
         margin-top: 55vh;
     }

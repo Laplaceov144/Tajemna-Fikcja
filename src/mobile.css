@@ -106,5 +106,8 @@
     .item-text {
         font-size: 0.45rem;
     }
+    .mgmt-btn {
+        display: none;
+    }
 
 }
