@@ -26,7 +26,7 @@
         z-index: 10;
         width: 100%;
         margin-top: 62.5vh;
-        margin-left: -5vw;
+        margin-left: -2.5vw;
     }
     .results-section {
         margin-top: 10vh;
@@ -47,6 +47,12 @@
         margin-left: -50vw;
         transform: scale(0.5);
     }
+    #player #google-drive {
+        margin-top: 10vw;
+        margin-left: -7.5vw;
+        height: 15vh;
+        transform: scale(0.5);
+    }
     #volume-slider {
         display: none;
     }
@@ -57,6 +63,9 @@
     }
     .track-nav-soundcloud, .track-nav-YouTube, .track-nav-twitch, .track-nav-vimeo, .track-nav-mixcloud, .track-nav-dailymotion {
         transform: translateX(-10vw) translateY(65vh) scale(0.5);
+    }
+    .track-nav-google-drive {
+        transform: translateX(-10vw) translateY(55vh) scale(0.5);
     }
     #pause-btn {
         margin-left: 7.5vw;
@@ -86,9 +95,14 @@
 
     .column .list-group {
         margin-top: 55vh;
+        margin-left: 0.5vw;
     }
     #list-spotify {
-        margin-left: -12vw;
+        margin-left: -15vw;
+    }
+    #list-google-drive {
+        margin-top: 1vh;
+        margin-left: -15vw;
     }
 
     .play-btn {

@@ -6,11 +6,21 @@
     --clr-bg-image: white;
     --clr-btns: black;
 }
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 120%; 
+    height: 100%;
+}
 body {
-    background: rgb(2,0,36);
+    /* background: rgb(2,0,36); */
     background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(122,97,57,1) 35%, rgba(0,212,255,1) 100%);
+    display: flex;
+    /* justify-content: center;
+    align-items: center; */
     overflow-x: hidden;
 }
+
 button:focus {
     outline: none;
 }
@@ -28,7 +38,7 @@ nav {
 
 
 #link-input {
-    width: 40%;
+    width: 25vw;
 }
 
 .link-input-hidden {
@@ -54,7 +64,7 @@ nav {
 #search-btns {
     position: fixed;
     z-index: 9;
-    margin-top: -2.75vh;
+    margin-top: -1.25vh;
     margin-left: -2.5vw;
 }
 #search-btns button {
@@ -263,7 +273,7 @@ nav {
 
 #special-buttons {
     position: fixed;
-    margin-top: -2.9vh;
+    margin-top: -1.4vh;
     margin-left: 4.5vw;
     width: 15vw;
 }
@@ -565,7 +575,7 @@ iframe#player {
 #info-btn {
     position: fixed;
     z-index: 10;
-    margin-top: -2.5vh;
+    margin-top: -1.25vh;
     margin-left: 80vw;
     color: var(--clr-window-bg);
     border: none;
