@@ -482,12 +482,14 @@ export default class App extends Component {
                             />
                         </section>
                         <section id="track-nav" className={trackNavClass}>
-                            <button className='nav-btn previous-btn' onClick={this.prevTrack}>
+                            <button id="previous-btn"
+                                className='nav-btn previous-btn' onClick={this.prevTrack}>
                                 <i className='arrow left'></i>
                             </button>
                             <button id="pause-btn" onClick={this.togglePlayingState}
                                 className='playing-true'>II</button>
-                            <button className='nav-btn next-btn' onClick={this.nextTrack}>
+                            <button id="next-btn"
+                                className='nav-btn next-btn' onClick={this.nextTrack}>
                                 <i className='arrow right'></i>
                             </button>
                             <button id="shuffle-btn"

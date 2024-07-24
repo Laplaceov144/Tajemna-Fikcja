@@ -40,8 +40,11 @@
     overflow-x: clip;
     overflow-y: clip;
 }
-.results-google-drive, .results-plik {
-    margin-top: 50vh;
+.results-google-drive {
+    margin-top: 55vh;
+}
+.results-plik {
+    margin-top: 45vh;
 }
 .results-spotify, .results-null {
     margin-top: 60vh;

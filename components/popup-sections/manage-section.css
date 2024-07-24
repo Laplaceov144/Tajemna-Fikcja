@@ -23,13 +23,14 @@
 }
 
 #info {
-    margin-top: -77.5vh;
-    overflow-y: scroll;
+    margin-top: -77.5vh; 
+    overflow-x: scroll;
 }
 #info .close-search {
     margin-top: -2.5vh;
 }
 #info-topics li {
+    display: flex;
     margin-bottom: -2vh;
     color: var(--clr-btns);
 }
@@ -37,5 +38,5 @@
     transform: translateY(65vh);
 }
 .info-fit-plik {
-    transform: translateY(50vh);
+    transform: translateY(45vh);
 }

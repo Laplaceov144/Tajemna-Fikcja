@@ -1,4 +1,4 @@
-@media screen and (max-width: 435px) {
+@media screen and (max-width: 550px) {
     #track-form {
         position: absolute;
         width: 100%;
@@ -44,14 +44,17 @@
     }
     .react-player {
         margin-top: -7.5vh;
-        margin-left: -50vw;
-        transform: scale(0.5);
+        margin-left: -45vw;
+        transform: scale(0.4);
     }
     #player #google-drive {
         margin-top: 10vw;
         margin-left: -7.5vw;
         height: 15vh;
         transform: scale(0.5);
+    }
+    .react-audio-player {
+        width: 120%;
     }
     #volume-slider {
         display: none;
@@ -66,6 +69,17 @@
     }
     .track-nav-google-drive {
         transform: translateX(-10vw) translateY(55vh) scale(0.5);
+    }
+    #previous-btn, #next-btn {
+        margin-top: 12.5vh;
+        transform: scale(2.5);
+    }
+    #previous-btn {
+        margin-left: -5vw;
+    }
+    .track-nav-spotify #shuffle-btn {
+        margin-left: 25vw;
+        font-size: 0.25rem;
     }
     #pause-btn {
         margin-left: 7.5vw;

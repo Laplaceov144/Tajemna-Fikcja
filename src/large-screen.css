@@ -1,18 +1,21 @@
 
-@media screen and (min-width: 1024px) and (min-height: 680px) {
+@media screen and (min-width: 1020px) and (min-height: 680px) {
     #search-btns {
-        margin-top: -2vh;
+        margin-top: -1vh;
     }
     #list-plik {
         margin-top: 2vh;
     }
-    section#results {
-        margin-top: 10vh;
+    .results-plik {
+        margin-top: 30vh;
+    }
+    .results-YouTube, .results-soundcloud, .results-twitch, .results-vimeo, .results-mixcloud, .results-dailymotion {
+        margin-top: 25vh;
     }
     .results-spotify {
         position: fixed;
         z-index: 50;
-        transform: translateY(60vh);
+        transform: translateY(10vh);
     }
     .results-spotify .results-section {
         min-height: 400px;
@@ -23,14 +26,37 @@
     #special-buttons {
         margin-top: -2vh;
     }
+
+    .react-player iframe {
+        transform: scale(0.8);
+    }
+    #volume-slider {
+        transform: scale(0.8);
+    }
+
+    .track-nav-spotify #shuffle-btn {
+        margin-top: 12.5vh;
+    }
+
+    .mgmt-fit-YouTube, .mgmt-fit-soundcloud, .mgmt-fit-twitch, .mgmt-fit-vimeo, .mgmt-fit-mixcloud, .mgmt-fit-dailymotion {
+        margin-top: 25vh;
+    }
+    .mgmt-fit-google-drive {
+        margin-top: 65vh;
+    }
+
     .hash-fit-YouTube, .hash-fit-soundcloud, .hash-fit-twitch, .hash-fit-vimeo, .hash-fit-mixcloud, .hash-fit-dailymotion {
         transform: translateX(-5vw) translateY(10vh);
     }
+
     .info-fit-YouTube, .info-fit-soundcloud, .info-fit-twitch, .info-fit-vimeo, .info-fit-mixcloud, .info-fit-dailymotion {
         transform: translateY(30vh);
     }
     .info-fit-spotify, .info-fit-plik {
-        transform: translateY(60vh);
+        transform: translateY(125vh);
+    }
+    .info-fit-google-drive {
+        transform: translateY(75vh);
     }
 
 }

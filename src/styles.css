@@ -99,7 +99,7 @@ nav {
     }
     
     audio {
-        margin-top: 5vh;
+        margin-top: 7.5vh;
         margin-left: 5vw;
         width: 80%;
     }
@@ -165,6 +165,9 @@ nav {
     .track-nav-spotify {
         transform: translateY(55vh);
     }
+    .track-nav-spotify #shuffle-btn {
+        margin-left: 15vw;
+    }
     .track-nav-google-drive #pause-btn, .track-nav-mixcloud #pause-btn {
         display: none;
     }
@@ -214,13 +217,13 @@ nav {
     margin-left: 10vw;
 }
 #list-plik {
-    margin-top: -2.5vh;
+    margin-top: 2.5vh;
     margin-left: 8.5vw;
 }
 #list-google-drive {
     position: relative;
     width: 125vw;
-    margin-top: -5vh;
+    margin-top: 5vh;
     margin-left: -5vw;
 }
 
