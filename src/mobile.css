@@ -28,14 +28,17 @@
         margin-top: 62.5vh;
         margin-left: -2.5vw;
     }
-    .results-section {
-        margin-top: 10vh;
-    }
-    #results ul li {
-        margin-top: -2vh;
+    #results .close-search {
+        margin-top: -60vh;
+        margin-left: 10vw;
     }
     #results ul {
-        margin-top: 0;
+        transform: translateY(5vh);
+        padding-top: 7.5vh;
+    }
+
+    #results ul li {
+        margin-top: -2vh;
     }
     #player > div {
         position: fixed;
