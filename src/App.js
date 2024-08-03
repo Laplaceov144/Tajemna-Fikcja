@@ -33,7 +33,6 @@ export default class App extends Component {
             infoDisplay: "none"
         },
         this.idbConn = new IDBPlaylistConnection();
-        //this.spotifyTimeout = null;
     }
 
     setFrame = (ID) => {
@@ -141,21 +140,11 @@ export default class App extends Component {
             defs.clearBolding();
             defs.boldCurrentItem(frame.url, frame.fileName);
 
-            if(list.length > prevState.list.length) this.idbConn.getHashLinkFromServer(list, false);
+            if(list.length > prevState.list.length
+                && !window.location.href.includes('#incognito')
+                ) this.idbConn.getHashLinkFromServer(list, false);
         }
-        //console.log(list);
-        // if(frame.medium == 'spotify') {
-        //     clearTimeout(this.spotifyTimeout);
-            
-        //     this.spotifyTimeout = setTimeout(() => {
-        //         const iframeElement = document.querySelector('#spotify iframe');
-        //         if(!iframeElement && this.state.frame.url == frame.url) {
-        //             const reorderedList = defs.maydayReorder(frame.url, list);
-        //             this.idbConn.savePlaylistAsDefault(reorderedList);
-        //             location.reload();
-        //         }
-        //     }, 3500); 
-        // } else clearTimeout(this.spotifyTimeout);
+
         if(frame.medium == 'spotify') {
             setTimeout(() => {
                 const iframeElement = document.querySelector('iframe');
@@ -195,6 +184,7 @@ export default class App extends Component {
             fileName: null
         }
         this.setList([...list, addedTrack]);
+        document.querySelector('#link-input').value = null;
         if(this.state.frame.url == null) this.setFrame(0);
     }
 
@@ -280,7 +270,6 @@ export default class App extends Component {
                 resultsMedia: platform 
             });
         });
-        document.querySelector('#link-input').value = null;
     }
 
     playFromList = (item) => {
