@@ -85,7 +85,7 @@ export default class App extends Component {
         this.attachSpaceKeyEventHandler();
         
         // Handling hash code from window URL
-        const hashLink = window.location.href.split('/#').pop();
+        const hashLink = window.location.href.split('#').pop();
         if(hashLink) {
             let fetchedList = [];
             const fetchPromise = new Promise(resolve => {
