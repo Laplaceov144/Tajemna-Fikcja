@@ -78,7 +78,7 @@ export default class App extends Component {
                         url: trackUrl,
                         fileName: fileName
                     }
-                }, () => defs.boldFirstItem());
+                });
                 handleMultipleURLs();
             }
         });
@@ -107,7 +107,7 @@ export default class App extends Component {
                             url: trackUrl,
                             fileName: fileName
                         }
-                    }, () => defs.boldFirstItem());
+                    });
                     handleMultipleURLs();
                     this.idbConn.savePlaylistAsDefault(fetchedList);
                     this.throwAlert("Import z linku zakończony powodzeniem!");
@@ -123,8 +123,6 @@ export default class App extends Component {
     componentDidUpdate(_, prevState) {
         const { frameTrackID, frame, list } = this.state;
         
-        defs.clearBolding();
-        if(frameTrackID != -1) defs.boldCurrentItem(frame.url, frame.fileName);
         handleMultipleURLs();
 
         if(list != prevState.list) {
@@ -137,8 +135,6 @@ export default class App extends Component {
             if (JSON.stringify(list) !== JSON.stringify(reorderedList)) {
                 this.setList(reorderedList);
             }
-            defs.clearBolding();
-            defs.boldCurrentItem(frame.url, frame.fileName);
 
             if(list.length > prevState.list.length
                 && !window.location.href.includes('#incognito')
@@ -208,6 +204,7 @@ export default class App extends Component {
         this.setList(concatted);
         let newFrameID = concatted.findIndex(item => item.trackUrl == frame.url);
         if(!newFrameID) newFrameID = -1;
+        this.setList(concatted);
         this.setState({ frameTrackID: newFrameID });
     }
 
@@ -235,14 +232,28 @@ export default class App extends Component {
     }
 
     handleDragEnd = ({ destination, source }) => {
+        const { frame, list } = this.state;
         if (!destination) return;
-        const reorderedList = defs.reorder(this.state.list, source.index, destination.index);
+
+        const reorderedList = defs.reorder(list, source.index, destination.index);
+        const updatedFTID = reorderedList.findIndex(item => item.trackUrl == frame.url);
+
         this.setList(reorderedList);
+        this.setState({
+            frameTrackID: updatedFTID
+        });
     }
 
     handlePlayerError = () => {
         this.throwAlert("Błąd odtwarzacza. Załadowano następny utwór.");
         setTimeout(this.nextTrack, 2000);
+    }
+
+    loadListViaMGMT = (list) => {
+        this.setList(list);
+        this.setState({
+            frameTrackID: -1
+        });
     }
 
     nextTrack = () => {
@@ -494,6 +505,7 @@ export default class App extends Component {
                             onDragEnd={this.handleDragEnd}
                             playFunction={this.playFromList}
                             deleteFunction={this.deleteItem}
+                            frameID={this.state.frameTrackID}
                         />
                     </div>
 
@@ -510,7 +522,7 @@ export default class App extends Component {
                 <section id="mgmt" className={mgmtClass}>
                     <button className='close-search' onClick={() => this.closeWindow('mgmt')}>X</button>
                     <ManageSection list={list}
-                        onDataFetch={this.setList}
+                        onDataFetch={this.loadListViaMGMT}
                         onClose={() => this.closeWindow('mgmt')}
                     />
                 </section>
@@ -534,7 +546,4 @@ export default class App extends Component {
             </div>
         );
     }
-
-
-
 }
