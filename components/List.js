@@ -1,11 +1,16 @@
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
-import { randomColor } from '../res/defs';
+import { listItemColor } from '../res/defs';
 
-const Item = ({ index, item, playBtn, deleteBtn }) => (
+const Item = ({ index, item, playBtn, deleteBtn, frameID }) => {
+
+  const bolderClass = index == frameID ? "bolded-item" : null;
+  const listItemClass = listItemColor(item.media) + " " + bolderClass;
+
+  return (
     <Draggable index={index} draggableId={item.id}>
       {(provided, snapshot) => (
         <li
-          className={randomColor(item.id)}
+          className={listItemClass}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           ref = {provided.innerRef}>
@@ -19,8 +24,9 @@ const Item = ({ index, item, playBtn, deleteBtn }) => (
       )}
     </Draggable>
   );
+}
 
-export const List = ({ list, onDragEnd, playFunction, deleteFunction }) => (
+export const List = ({ list, onDragEnd, playFunction, deleteFunction, frameID }) => (
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="droppable">
         {(provided) => (
@@ -30,7 +36,8 @@ export const List = ({ list, onDragEnd, playFunction, deleteFunction }) => (
             {list.map((item, index) => (
                 <Item key={item.id} index={index} item={item} 
                 playBtn={playFunction} 
-                deleteBtn={deleteFunction} />
+                deleteBtn={deleteFunction}
+                frameID={frameID} />
             ))}
           </ul>
         )}
