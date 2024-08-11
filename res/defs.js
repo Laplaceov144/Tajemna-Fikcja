@@ -9,28 +9,6 @@ export const infoText = [ 'Tajemna Fikcja to nowej jakości odtwarzacz muzyczny 
     `Siłą rzeczy zapisane w ten sposób plejlisty nie będą dostępne na innym urządzeniu chyba, że… skorzystamy z opcji “eksportuj plejlistę” -> “do linku”. Dzięki temu możemy wygenerować unikatowy link do aktualnej plejlisty (acz bez lokalnych plików audio na ten moment). Skorzystanie z tej opcji oznacza oczywiście zgodę na anonimowe przetwarzanie dostarczonych przez użytkownika metadanych - plejlista musi zostać zapisana na serwerze.`,
     `Pochwały i/lub zażalenia można jak najbardziej kierować do administratora serwisu pod adresem: travis7684reaper@proton.me`
 ]
-   
-export const boldCurrentItem = (frameURL, filename) => {
-  const allItems = document.querySelectorAll('.list-group-item');
-  
-  for(const item of allItems) {
-    const innerSpan = item.querySelector('span.item-text');
-    if(innerSpan.dataset.trackUrl == frameURL || innerSpan.innerText == filename) {
-      item.classList.add('bolded-item');
-    } else item.classList.remove('bolded-item');
-  }
-}
-
-export const boldFirstItem = () => {
-  const item = [...document.querySelectorAll('.list-group-item')][0];
-  item.classList.add('bolded-item');
-}
-
-export const clearBolding = () => {
-  [...document.querySelectorAll('.list-group-item')].forEach(item => {
-    item.classList.remove('bolded-item');
-  });
-}
 
 export function detectMedium(inputString, mediaArray) {
     const mediaToCheck = [...mediaArray, 'youtu.be', 'drive.google'];
@@ -79,44 +57,44 @@ export const filterResults = (results, media) => {
 }
 
 export const formatGoogleDriveSrc = (inputUrl) => {
-  const baseURL = "https://drive.google.com/file/d/"
-  //const baseURL = "https://drive.google.com/uc?export=preview&id=";
-  //const baseURL = "https://drive.google.com/uc?export=download&id="
+  const baseURL = "https://drive.google.com/file/d/";
   const extractedID = inputUrl.split('/d/')[1].split('/')[0];
+
   return baseURL + extractedID + "/preview?autoplay=1";
 }
 
 export const maydayReorder = (trackURL, list) => {
   const currTrackToTop = list.find(item => item.trackUrl == trackURL);
   const remainingTracks = list.filter(item => item != currTrackToTop);
+  
   return [currTrackToTop, ...remainingTracks];
 };
 
-export const randomColor = (id) => {
-    let clr = parseInt(id) % 8;
-    switch(clr) {
-      case 0:
+export const listItemColor = (medium) => {
+    let clr = "primary";
+    switch(medium) {
+      case 'twitch':
         clr = "info";
         break;
-      case 1:
+      case 'mixcloud':
         clr = "secondary";
         break;
-      case 2:
+      case 'spotify':
         clr = "success";
         break;
-      case 3:
+      case 'YouTube':
         clr = "danger";
         break;
-      case 4:
+      case 'soundcloud':
         clr = "warning";
         break;
-      case 5:
+      case 'vimeo':
         clr = "primary";
         break;
-      case 6:
+      case 'plik audio':
         clr = "light";
         break;
-      case 7:
+      case 'google-drive':
         clr = "dark";
         break;
       default:
