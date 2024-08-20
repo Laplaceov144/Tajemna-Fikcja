@@ -22,7 +22,9 @@ export const SearchResults = (props) => {
     <ul className="results-section">
       {itemsToDisplay.map((item) => {
         return <li className="result-item">
-          <button className="add-button" onClick={() => props.addTrack(item, props.media)}>+</button>
+          <button className="add-button" onClick={() => props.addTrack(item, props.media, false)}>+</button>
+          <button className="top-button" onClick={() => props.addTrack(item, props.media, true)}>
+              <i className="arrow up"></i></button>
           <img className="shrinkable" src={item.pagemap.cse_thumbnail[0].src}></img>
           <h3 className="shrinkable"><a href={item.link} target="_blank">{item.title}</a></h3>
           <p className="shrinkable">{item.snippet}</p>

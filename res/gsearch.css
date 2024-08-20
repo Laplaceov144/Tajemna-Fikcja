@@ -50,3 +50,13 @@
     margin-top: 60vh;
 }
 
+
+.up {
+    transform: rotate(-135deg) scale(1.75);
+    -webkit-transform: rotate(-135deg) scale(1.75);
+    border-color: burlywood;
+}
+.top-button {
+    margin-top: -1rem;
+    padding-top: 0;
+}

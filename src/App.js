@@ -167,8 +167,8 @@ export default class App extends Component {
     }
 
     // Definitions in alphabetical order
-    addTrack = (item, media) => {
-        const list = this.state.list;
+    addTrack = (item, media, shouldGoToTop) => {
+        const { list, frameTrackID } = this.state;
         if(list.length > 49) {
             this.throwAlert("Plejlista może zawierać maksymalnie 50 utworów!");
             return false;
@@ -179,7 +179,13 @@ export default class App extends Component {
             trackUrl: item.link,
             fileName: null
         }
-        this.setList([...list, addedTrack]);
+
+        if(shouldGoToTop) {
+            this.setList([addedTrack, ...list]);
+            this.setState({ frameTrackID: frameTrackID + 1 })
+        }
+        else this.setList([...list, addedTrack]);
+
         document.querySelector('#link-input').value = null;
         if(this.state.frame.url == null) this.setFrame(0);
     }

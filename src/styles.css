@@ -355,7 +355,7 @@ nav {
         transition: 50ms ease-in-out;
     }
 
-    .add-button {
+    .add-button, .top-button {
         width: 50%;
         background: var(--clr-window-gradient);
         border-color: var(--clr-window-border);
@@ -363,12 +363,12 @@ nav {
         font-size: 2rem;
         color: burlywood;
     }
-    .add-button:hover {
+    .add-button:hover, .top-button:hover {
         cursor: pointer;
         transform: scale(0.9);
         transition: 150ms ease-in-out;
     }
-    .add-button:hover ~ .shrinkable {
+    .add-button:hover ~ .shrinkable, .top-button:hover ~ .shrinkable {
         transform: scale(0.9);
         transition: 150ms ease-in-out;
     }
