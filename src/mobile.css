@@ -74,8 +74,11 @@
         transform: translateX(-10vw) translateY(55vh) scale(0.5);
     }
     #previous-btn, #next-btn {
-        margin-top: 12.5vh;
-        transform: scale(2.5);
+        margin-top: 8.5vh;
+        transform: scale(4.5);
+    }
+    #previous-btn i, #next-btn i {
+        border-color: burlywood;
     }
     #previous-btn {
         margin-left: -5vw;
@@ -88,11 +91,16 @@
         margin-left: 7.5vw;
         margin-right: 7.5vw;
     }
+    #next-btn {
+        margin-left: 1.5vw;
+    }
     #shuffle-btn {
         margin-left: 50vw;
     }
+
     #rp-jump-btn {
         transform: translateX(25vw) translateY(-13.5vh);
+        display: none;
     }
 
     #special-buttons {

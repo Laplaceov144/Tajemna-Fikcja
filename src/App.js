@@ -182,9 +182,8 @@ export default class App extends Component {
 
         if(shouldGoToTop) {
             this.setList([addedTrack, ...list]);
-            this.setState({ frameTrackID: frameTrackID + 1 })
-        }
-        else this.setList([...list, addedTrack]);
+            if(frameTrackID != null) this.setState({ frameTrackID: frameTrackID + 1 })
+        } else this.setList([...list, addedTrack]);
 
         document.querySelector('#link-input').value = null;
         if(this.state.frame.url == null) this.setFrame(0);
@@ -273,7 +272,7 @@ export default class App extends Component {
 
         let searchQuery = inputValue + " " + platform;
         let fetchedResults = [];
-        if(platform == 'Spotify') searchQuery += " track";
+        if(platform == 'Spotify' || platform == 'SoundCloud') searchQuery += " track";
 
         const resultPromise = new Promise(resolve => {
             fetchedResults = defs.fetchGoogleResults(searchQuery);
@@ -297,6 +296,11 @@ export default class App extends Component {
     prevTrack = () => {
         const index = this.state.frameTrackID;
         if(index > 0) this.setFrame(index - 1);
+    }
+
+    searchInYTByDefault = (event) => {
+        event.preventDefault();
+        this.performSearch("YouTube");
     }
 
     showInfo = () => {
@@ -422,7 +426,11 @@ export default class App extends Component {
 
         return (
             <div id="container">
-                <form id="track-form" onSubmit={(event) => event.preventDefault()}>
+                <form id="track-form" 
+
+                    //  Gdy wciskamy Enter to domyślnie szuka w YT
+                    onSubmit={(event) => this.searchInYTByDefault(event)}>
+
                     <input id="link-input" type="search" name="gsearch"
                         placeholder='wyszukaj lub wklej url'
                         onFocus={this.removeSpaceKeyHandler}
@@ -432,10 +440,12 @@ export default class App extends Component {
                     <input id="file-input" type="file" name="audio" accept=".mp3, .wav" multiple
                         className={this.state.inputView == 'file' ? "file-input-visible" : "file-input"}
                     />
-                    <button onClick={this.submitTrack}>
+                    <button type="button"
+                        onClick={this.submitTrack}>
                         {this.state.inputView == 'text' ? 'dodaj url' : 'dodaj'}
                     </button>
-                    <button onClick={this.toggleFileInput}>
+                    <button type="button"
+                        onClick={this.toggleFileInput}>
                         {this.state.inputView == 'text' ? 'plik audio' : 'wróć'}
                     </button>
                     <SearchBtns fName={this.performSearch}/>
