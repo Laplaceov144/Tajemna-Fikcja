@@ -47,6 +47,9 @@ export const filterResults = (results, media) => {
     case 'Spotify':
       regex = "open.spotify.com/track";
       break; 
+    case 'Soundcloud':
+      regex = 'https://soundcloud.com';
+      break;
     case 'Twitch':
       regex = "twitch.tv/videos";
     default:
