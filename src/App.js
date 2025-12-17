@@ -298,6 +298,22 @@ export default class App extends Component {
         if(index > 0) this.setFrame(index - 1);
     }
 
+    saveHashLinkToClipboard = async () => {
+    if(window.screen.width > 800) return;
+    try {
+        const fetchedResponse = await this.idbConn.getHashLinkFromServer(this.state.list, true);
+
+        // Copy the fetchedResponse to the clipboard
+        await navigator.clipboard.writeText(fetchedResponse);
+
+        // Alert the user that the text has been copied
+        alert("Hash link copied to clipboard!");
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+
     searchInYTByDefault = (event) => {
         event.preventDefault();
         this.performSearch("YouTube");
@@ -463,7 +479,7 @@ export default class App extends Component {
                             <button className='page-link dropdown'
                                 onMouseEnter={() => this.toggleExportBtns('hovered')}
                                 // onTouchStart={() => this.generateHashLink}
-                                onClick={this.generateHashLink}
+                                onClick={this.saveHashLinkToClipboard}
                             >eksportuj plejlistę
                             </button>
                             <ul className='hidden-list'>
