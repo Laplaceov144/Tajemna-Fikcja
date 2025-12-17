@@ -462,7 +462,8 @@ export default class App extends Component {
                         <li className='page-item'>
                             <button className='page-link dropdown'
                                 onMouseEnter={() => this.toggleExportBtns('hovered')}
-                                onTouchStart={() => this.generateHashLink}
+                                // onTouchStart={() => this.generateHashLink}
+                                onClick={this.generateHashLink}
                             >eksportuj plejlistę
                             </button>
                             <ul className='hidden-list'>
