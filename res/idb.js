@@ -13,6 +13,12 @@ function getCSRFToken(name) {
     return initValue;
 }
 
+
+// Na górze pliku, przed klasą
+function isMobile() {
+    return /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+}
+
 export default class IDBPlaylistConnection {
     constructor() {
         this.dbName = 'myDatabase';
@@ -59,7 +65,22 @@ export default class IDBPlaylistConnection {
         });
     }
 
+
+
+
     async retrieveListFromIDB(playlistID, isUserLoading) {
+        if (isMobile()) {
+            try {
+                const raw = localStorage.getItem(playlistID);
+                const result = raw ? JSON.parse(raw) : [];
+                if (isUserLoading) this.savePlaylistAsDefault(result);
+                return result;
+            } catch (error) {
+                console.error("LocalStorage retrieve failed:", error);
+                return [];
+            }
+        }
+
         const dbName = this.dbName;
         const storeName = this.storeID;
         try {
@@ -102,6 +123,10 @@ export default class IDBPlaylistConnection {
             return [];
         }
     }
+
+
+
+    
 
     async retrieveKeysFromStore() {
         const storeName = this.storeID;
@@ -161,6 +186,16 @@ export default class IDBPlaylistConnection {
     }
 
     async savePlaylistAsDefault(list) {
+        if (isMobile()) {
+            try {
+                // Pliki audio nie mogą być serializowane do JSON — pomijamy je
+                const serializable = list.filter(item => item.media !== 'plik audio');
+                localStorage.setItem(this.defaultPlaylist, JSON.stringify(serializable));
+            } catch (error) {
+                console.error("LocalStorage save failed:", error);
+            }
+            return;
+        }
         try {
             const dbConn = await this.openIndexedDB();
             console.log(await this.saveListToIndexedDB(dbConn, list, this.defaultPlaylist));
