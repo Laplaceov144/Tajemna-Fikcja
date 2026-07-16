@@ -132,6 +132,6 @@ export const validateGoogleDriveUrl = (inputUrl) => {
 }
 
 export const validateSpotifyUrl = (inputUrl) => {
-  return inputUrl.includes('open.spotify.com/track');
+  return inputUrl.includes('open.spotify.com/track') || inputUrl.includes('open.spotify/episode');
 }
 
