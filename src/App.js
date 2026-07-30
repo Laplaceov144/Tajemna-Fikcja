@@ -507,6 +507,11 @@ export default class App extends Component {
                                 </li>
                             </ul>
                         </li>
+                        <li className='page-item'>
+                             <button className='page-link'
+                                onClick={this.generateRandomPlaylist}>losowa plejlista
+                            </button>
+                        </li>
                     </ul>
                 </section>
 
