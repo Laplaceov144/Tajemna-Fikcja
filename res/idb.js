@@ -24,25 +24,25 @@ export default class IDBPlaylistConnection {
         this.dbName = 'myDatabase';
         this.storeID = 'tfikcja';
         this.defaultPlaylist = 'playlist00';
-    }    
+    }
 
     openIndexedDB() {
         const storeID = this.storeID;
         return new Promise((resolve, reject) => {
             const request = indexedDB.open(this.dbName);
 
-            request.onupgradeneeded = function(event) {
+            request.onupgradeneeded = function (event) {
                 const db = event.target.result;
-                if(!db.objectStoreNames.contains(storeID)) {
+                if (!db.objectStoreNames.contains(storeID)) {
                     db.createObjectStore(storeID);
                 }
             }
 
-            request.onerror = function(event) {
+            request.onerror = function (event) {
                 reject('Error opening IndexedDB', event);
             }
 
-            request.onsuccess = function(event) {
+            request.onsuccess = function (event) {
                 resolve(event.target.result);
             }
         });
@@ -55,11 +55,11 @@ export default class IDBPlaylistConnection {
             const store = txn.objectStore(storeName);
             const putRequest = store.put(list, playlistID);
 
-            putRequest.onerror = function(event) {
+            putRequest.onerror = function (event) {
                 reject('Error storing file in IndexedDB', event);
             }
 
-            putRequest.onsuccess = function(event) {
+            putRequest.onsuccess = function (event) {
                 resolve('Playlist stored in IndexedDB');
             }
         });
@@ -97,15 +97,15 @@ export default class IDBPlaylistConnection {
 
                 getRequest.onsuccess = (event) => {
                     const retrieved = event.target.result;
-                    if(retrieved) {
+                    if (retrieved) {
                         let result = retrieved;
 
                         // Looks like Firefox is not supporting storing audio files in IDB
-                        if(navigator.userAgent.includes('Firefox')) {
+                        if (navigator.userAgent.includes('Firefox')) {
                             result = result.filter(item => item.media != 'plik audio');
                         }
 
-                        if(isUserLoading) this.savePlaylistAsDefault(result);
+                        if (isUserLoading) this.savePlaylistAsDefault(result);
                         resolve(result);
                     } else {
                         resolve([]);
@@ -126,7 +126,7 @@ export default class IDBPlaylistConnection {
 
 
 
-    
+
 
     async retrieveKeysFromStore() {
         const storeName = this.storeID;
@@ -134,14 +134,14 @@ export default class IDBPlaylistConnection {
             const dbConn = await this.openIndexedDB();
             const txn = dbConn.transaction(storeName, 'readonly');
             const objectStore = txn.objectStore(storeName);
-            
+
             const resultPromise = new Promise((resolve, reject) => {
                 const keysRequest = objectStore.getAllKeys();
 
                 keysRequest.onsuccess = () => {
                     console.log("Keys retrieved successfully: ", keysRequest.result);
                     const result = keysRequest.result;
-                    if(result) {
+                    if (result) {
                         resolve(result);
                     } else {
                         resolve([]);
@@ -180,7 +180,7 @@ export default class IDBPlaylistConnection {
             txn.oncomplete = () => {
                 dbConn.close();
             }
-        } catch(error) {
+        } catch (error) {
             console.error("Deletion failed in 'catch' clause.");
         }
     }
@@ -200,7 +200,7 @@ export default class IDBPlaylistConnection {
             const dbConn = await this.openIndexedDB();
             console.log(await this.saveListToIndexedDB(dbConn, list, this.defaultPlaylist));
             setTimeout(dbConn.close(), 3500);
-        } catch(error) {
+        } catch (error) {
             console.error(error);
         }
     }
@@ -235,22 +235,24 @@ export default class IDBPlaylistConnection {
             const dirHandle = await window.showDirectoryPicker();
             const audioFiles = await this.getAllAudioFiles();
 
-            for(const file of audioFiles) {
-                const fileHandle = await dirHandle.getFileHandle(file.name, { create: true });
+            for (const file of audioFiles) {
+                const fileHandle = await dirHandle.getFileHandle(file.name, {
+                    create: true
+                });
                 const writableStream = await fileHandle.createWritable();
                 await writableStream.write(file);
                 await writableStream.close();
             }
 
             alert('Operacja eksportowania zakończona sukcesem!');
-        } catch(error) {
+        } catch (error) {
             console.error(error);
             alert('Operacja eksportu została przerwana.');
         }
     }
 
     async getHashLinkFromServer(list, isUserSubmitting) {
-        
+
         const formatted = list.map((item, index) => {
             return {
                 id: index + 1,
@@ -261,31 +263,31 @@ export default class IDBPlaylistConnection {
         const dataToSend = {
             list: formatted,
             deviceInfo: navigator.userAgent,
-            hashLinkRequest: isUserSubmitting 
+            hashLinkRequest: isUserSubmitting
         }
 
         const resultPromise = new Promise((resolve, reject) => {
             fetch(`https://laplaceov144.pythonanywhere.com/api/submit-playlist/`, {
                 method: 'POST',
                 headers: {
-                  'Content-Type': 'application/json',
-                  'X-CSRFToken': getCSRFToken('csrftoken')
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken('csrftoken')
                 },
                 body: JSON.stringify(dataToSend)
-    
+
             }).then((response) => response.json()).then(data => {
-    
+
                 if (data.status === 'success' && data.hash_link) {
-    
-                    if(isUserSubmitting) console.log('Generated Hash Link:', data.hash_link);
+
+                    if (isUserSubmitting) console.log('Generated Hash Link:', data.hash_link);
                     resolve(data.hash_link);
-    
+
                 } else if (data.status === 'empty_playlist') {
-    
+
                     console.warn(data.message);
                     resolve(null);
                 }
-    
+
             }).catch((error) => reject(console.error('Error: ', error)));
         });
 
@@ -293,36 +295,63 @@ export default class IDBPlaylistConnection {
     }
 
     async fetchListFromHashLink(hashLink) {
-        const dataToSend = { hashCode: hashLink };
-        
+        const dataToSend = {
+            hashCode: hashLink
+        };
+
         const resultPromise = new Promise((resolve, reject) => {
             fetch(`https://laplaceov144.pythonanywhere.com/api/fetch-playlist/`, {
                 method: 'POST',
                 headers: {
-                  'Content-Type': 'application/json',
-                  'X-CSRFToken': getCSRFToken('csrftoken')
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken('csrftoken')
                 },
                 body: JSON.stringify(dataToSend)
-    
-            }).then((response) => response.json()).then(data => {
-                    const fetchedData = data.playlist;
 
-                    const formattedList = fetchedData.filter(item => item.medium != 'plik audio')
-                        .map((item, index) => {
-                            return {
-                                id: (index + 1).toString(),
-                                media: item.medium,
-                                trackUrl: item.url,
-                                fileName: null
-                            }
-                        }).reduce((acc, curr) => {   // remove duplicates in case they would occurr
-                            return acc.includes(curr)
-                                ? acc
-                                : [...acc, curr];
-                            }, []);
-                    resolve(formattedList);
+            }).then((response) => response.json()).then(data => {
+                const fetchedData = data.playlist;
+
+                const formattedList = fetchedData.filter(item => item.medium != 'plik audio')
+                    .map((item, index) => {
+                        return {
+                            id: (index + 1).toString(),
+                            media: item.medium,
+                            trackUrl: item.url,
+                            fileName: null
+                        }
+                    }).reduce((acc, curr) => { // remove duplicates in case they would occurr
+                        return acc.includes(curr) ?
+                            acc :
+                            [...acc, curr];
+                    }, []);
+                resolve(formattedList);
 
             }).catch(error => reject(console.error('Error: ' + error)));
+        });
+
+        return await resultPromise;
+    }
+
+    async getRandomPlaylistFromServer() {
+        const dataToSend = {
+            deviceInfo: navigator.userAgent
+        };
+
+        const resultPromise = new Promise((resolve, reject) => {
+            fetch(`https://laplaceov144.pythonanywhere.com/api/random-playlist/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken('csrftoken')
+                },
+                body: JSON.stringify(dataToSend)
+            }).then((response) => response.json()).then(data => {
+                if (data.status === 'success' && data.hash_link) {
+                    resolve(data.hash_link);
+                } else {
+                    reject(data.message || 'Nie udało się wygenerować plejlisty');
+                }
+            }).catch((error) => reject(error));
         });
 
         return await resultPromise;
