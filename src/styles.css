@@ -591,6 +591,11 @@ iframe#player {
     transform: 550ms ease-in-out;
 }
 
+#random-button {
+    position: absolute;
+    margin-top: 5vh;
+}
+
 
 @media screen and (max-width: 760px) {
     #track-nav {
