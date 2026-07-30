@@ -236,6 +236,17 @@ export default class App extends Component {
         }
     }
 
+    generateRandomPlaylist = async () => {
+        try {
+            const hashLink = await this.idbConn.getRandomPlaylistFromServer();
+            const baseUrl = window.location.href.split('#')[0];
+            window.location.href = baseUrl + '#' + hashLink;
+            location.reload();
+        } catch(error) {
+            this.throwAlert("Nie udało się wygenerować losowej plejlisty: " + error);
+        }
+    }
+
     handleDragEnd = ({ destination, source }) => {
         const { frame, list } = this.state;
         if (!destination) return;
