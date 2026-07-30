@@ -481,6 +481,11 @@ export default class App extends Component {
                 <section id="special-buttons" className={list.length ? "block" : "none"}
                         onMouseLeave={() => this.toggleExportBtns('hidden-btns')}>
                     <ul>
+                        <li className='page-item' id="random-button">
+                            <button className='page-link'
+                                onClick={this.generateRandomPlaylist}>losowa plejlista
+                            </button>
+                        </li>
                         <li className='page-item mgmt-btn'>
                             <button className='page-link'
                                 onClick={this.showMgmtWindow}>zarządzaj plejlistami
@@ -506,11 +511,6 @@ export default class App extends Component {
                                     </button>
                                 </li>
                             </ul>
-                        </li>
-                        <li className='page-item'>
-                             <button className='page-link'
-                                onClick={this.generateRandomPlaylist}>losowa plejlista
-                            </button>
                         </li>
                     </ul>
                 </section>
